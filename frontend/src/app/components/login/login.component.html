@@ -1,0 +1,92 @@
+<div class="auth-wrapper">
+  <div class="auth-visual">
+    <div class="visual-content">
+      <div class="logo-mark">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">FormaPro</span>
+      </div>
+      <h1 class="visual-headline">
+        Rejoignez des milliers<br>
+        d'<em>apprenants</em> qui<br>
+        progressent chaque jour.
+      </h1>
+
+      <ul class="feature-list">
+        <li><span class="feat-icon">✓</span> Accès à des formations certifiantes</li>
+        <li><span class="feat-icon">✓</span> Suivi personnalisé par des formateurs</li>
+        <li><span class="feat-icon">✓</span> Certifications reconnues par l'industrie</li>
+      </ul>
+    </div>
+    <div class="visual-decoration">
+      <div class="deco-ring ring-1"></div>
+      <div class="deco-ring ring-2"></div>
+      <div class="deco-ring ring-3"></div>
+    </div>
+  </div>
+
+  <div class="auth-form-panel">
+    <div class="form-container">
+      <div class="form-header">
+        <h2>Connexion</h2>
+        <p>Accédez à votre espace de formation</p>
+      </div>
+
+      <div class="alert alert-error" *ngIf="errorMessage">
+        <span class="alert-icon">⚠</span>
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form" novalidate>
+
+        <div class="field" [class.field--error]="emailControl?.invalid && emailControl?.touched">
+          <label for="email">Adresse email</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉</span>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="vous@exemple.com"
+              autocomplete="email"
+            />
+          </div>
+          <span class="field-error" *ngIf="emailControl?.invalid && emailControl?.touched">
+            <ng-container *ngIf="emailControl?.errors?.['required']">Email obligatoire</ng-container>
+            <ng-container *ngIf="emailControl?.errors?.['email']">Format d'email invalide</ng-container>
+          </span>
+        </div>
+
+        <div class="field" [class.field--error]="passwordControl?.invalid && passwordControl?.touched">
+          <label for="password">Mot de passe</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Votre mot de passe"
+              autocomplete="current-password"
+            />
+            <button type="button" class="toggle-pwd" (click)="togglePassword()">
+              {{ showPassword ? '🙈' : '👁' }}
+            </button>
+          </div>
+          <span class="field-error" *ngIf="passwordControl?.invalid && passwordControl?.touched">
+            Mot de passe obligatoire (min. 6 caractères)
+          </span>
+        </div>
+
+        <button type="submit" class="btn-submit" [class.btn-loading]="isLoading" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Se connecter</span>
+          <span *ngIf="isLoading" class="spinner"></span>
+        </button>
+
+        <p class="form-footer">
+          Pas encore de compte ?
+          <a routerLink="/register">Créer un compte apprenant</a>
+        </p>
+
+      </form>
+    </div>
+  </div>
+</div>

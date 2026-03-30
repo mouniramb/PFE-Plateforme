@@ -1,0 +1,77 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item nav-item--active">
+        <span class="nav-icon">◈</span><span>Tableau de bord</span>
+      </a>
+      <a routerLink="/admin/formateurs" class="nav-item">
+        <span class="nav-icon">◉</span><span>Formateurs</span>
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Administrateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="welcome-header">
+      <div>
+        <p class="greeting">Bonjour,</p>
+        <h1>{{ currentUser?.prenom }} {{ currentUser?.nom }} 👋</h1>
+        <p class="subtitle">Voici un aperçu de votre plateforme de formation.</p>
+      </div>
+    </div>
+
+    <div class="dashboard-alert dashboard-alert--error" *ngIf="errorMessage">
+      <span>{{ errorMessage }}</span>
+      <button type="button" class="alert-retry-btn" (click)="retryLoadingStats()">
+        Reessayer
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card stat-card--blue">
+        <div class="stat-icon">◉</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ isLoading ? '—' : formateursCount }}</span>
+          <span class="stat-label">Formateurs</span>
+        </div>
+        <a routerLink="/admin/formateurs" class="stat-link">Gérer →</a>
+      </div>
+      <div class="stat-card stat-card--purple">
+        <div class="stat-icon">◈</div>
+        <div class="stat-info">
+          <span class="stat-value">—</span>
+          <span class="stat-label">Apprenants</span>
+        </div>
+      </div>
+      <div class="stat-card stat-card--green">
+        <div class="stat-icon">◆</div>
+        <div class="stat-info">
+          <span class="stat-value">—</span>
+          <span class="stat-label">Formations</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <h2>Actions rapides</h2>
+      <div class="actions-grid">
+        <a routerLink="/admin/formateurs" class="action-card">
+          <span class="action-icon">+</span>
+          <span class="action-title">Ajouter un formateur</span>
+          <span class="action-desc">Créer un compte et envoyer les identifiants</span>
+        </a>
+      </div>
+    </div>
+  </main>
+</div>

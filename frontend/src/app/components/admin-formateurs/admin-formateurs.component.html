@@ -1,0 +1,141 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">◈</span><span>Tableau de bord</span>
+      </a>
+      <a routerLink="/admin/formateurs" class="nav-item nav-item--active">
+        <span class="nav-icon">◉</span><span>Formateurs</span>
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Administrateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Déconnexion">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Gestion des formateurs</h1>
+        <p>{{ formateurs.length }} formateur{{ formateurs.length > 1 ? 's' : '' }} enregistré{{ formateurs.length > 1 ? 's' : '' }}</p>
+      </div>
+      <button class="btn-primary" (click)="openAddModal()">
+        <span>+</span> Ajouter un formateur
+      </button>
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage">
+      <span>✓</span> {{ successMessage }}
+    </div>
+    <div class="alert alert-error" *ngIf="errorMessage">
+      <span>⚠</span> {{ errorMessage }}
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner-lg"></div>
+      <p>Chargement des formateurs...</p>
+    </div>
+
+    <div class="table-card" *ngIf="!isLoading">
+      <div class="empty-state" *ngIf="formateurs.length === 0">
+        <span class="empty-icon">◉</span>
+        <p>Aucun formateur pour l'instant.</p>
+        <button class="btn-primary" (click)="openAddModal()">Ajouter le premier formateur</button>
+      </div>
+
+      <table *ngIf="formateurs.length > 0">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Formateur</th>
+          <th>Email</th>
+          <th>Date d'ajout</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let formateur of formateurs; let i = index">
+          <td class="td-num">{{ i + 1 }}</td>
+          <td class="td-name">
+            <div class="name-cell">
+              <div class="avatar">{{ formateur.prenom.charAt(0) }}{{ formateur.nom.charAt(0) }}</div>
+              <div>
+                <span class="full-name">{{ formateur.prenom }} {{ formateur.nom }}</span>
+                <span class="role-badge">Formateur</span>
+              </div>
+            </div>
+          </td>
+          <td class="td-email">{{ formateur.email }}</td>
+          <td class="td-date">{{ formateur.dateCreation }}</td>
+          <td class="td-actions">
+            <ng-container *ngIf="deleteConfirmId === formateur.id; else normalActions">
+              <span class="confirm-text">Confirmer ?</span>
+              <button class="btn-danger-sm" (click)="deleteFormateur(formateur.id)">Oui</button>
+              <button class="btn-ghost-sm" (click)="cancelDelete()">Non</button>
+            </ng-container>
+            <ng-template #normalActions>
+              <button class="btn-icon btn-edit" (click)="openEditModal(formateur)" title="Modifier">✏</button>
+              <button class="btn-icon btn-delete" (click)="confirmDelete(formateur.id)" title="Supprimer">🗑</button>
+            </ng-template>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditing ? 'Modifier le formateur' : 'Ajouter un formateur' }}</h3>
+      <button class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+
+    <p class="modal-subtitle" *ngIf="!isEditing">
+      Un email sera automatiquement envoyé au formateur avec ses identifiants de connexion.
+    </p>
+
+    <form [formGroup]="formateurForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="modal-body">
+        <div class="field-row">
+          <div class="field" [class.field--error]="nom?.invalid && nom?.touched">
+            <label>Nom</label>
+            <input type="text" formControlName="nom" placeholder="Dupont" />
+            <span class="field-error" *ngIf="nom?.invalid && nom?.touched">Nom obligatoire</span>
+          </div>
+          <div class="field" [class.field--error]="prenom?.invalid && prenom?.touched">
+            <label>Prénom</label>
+            <input type="text" formControlName="prenom" placeholder="Jean" />
+            <span class="field-error" *ngIf="prenom?.invalid && prenom?.touched">Prénom obligatoire</span>
+          </div>
+        </div>
+        <div class="field" [class.field--error]="email?.invalid && email?.touched">
+          <label>Email professionnel</label>
+          <input type="email" formControlName="email" placeholder="formateur@exemple.com" />
+          <span class="field-error" *ngIf="email?.invalid && email?.touched">
+            <ng-container *ngIf="email?.errors?.['required']">Email obligatoire</ng-container>
+            <ng-container *ngIf="email?.errors?.['email']">Format invalide</ng-container>
+          </span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" (click)="closeModal()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="formLoading">
+          <span *ngIf="!formLoading">{{ isEditing ? 'Enregistrer' : 'Ajouter et envoyer email' }}</span>
+          <span *ngIf="formLoading" class="spinner-sm"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
