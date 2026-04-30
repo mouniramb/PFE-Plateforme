@@ -1,0 +1,152 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/admin/formations" class="nav-item">
+        <span class="nav-icon">◆</span>
+        <span>Formations</span>
+      </a>
+      <a routerLink="/admin/inscriptions" class="nav-item nav-item--active">
+        <span class="nav-icon">◉</span>
+        <span>Inscriptions</span>
+      </a>
+      <a routerLink="/admin/formateurs" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>Formateurs</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Administrateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Déconnexion">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Inscriptions en attente</h1>
+        <p>Traitez les demandes des apprenants.</p>
+      </div>
+
+      <span class="pending-pill">
+        <span class="dot"></span>
+        {{ totalElements }} en attente
+      </span>
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage">✓ {{ successMessage }}</div>
+    <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Chargement des inscriptions...</p>
+    </div>
+
+    <div class="table-card" *ngIf="!isLoading">
+      <div class="empty-state" *ngIf="inscriptions.length === 0">
+        <p>Aucune inscription en attente.</p>
+      </div>
+
+      <table *ngIf="inscriptions.length > 0">
+        <thead>
+          <tr>
+            <th>Apprenant</th>
+            <th>Formation</th>
+            <th>Dates formation</th>
+            <th>Date de demande</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let inscription of inscriptions">
+            <td>
+              <div class="user-cell">
+                <div class="avatar">{{ inscription.apprenantPrenom.charAt(0) }}{{ inscription.apprenantNom.charAt(0) }}</div>
+                <div class="meta">
+                  <strong>{{ inscription.apprenantPrenom }} {{ inscription.apprenantNom }}</strong>
+                  <span>{{ inscription.apprenantEmail }}</span>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <a class="formation-link" (click)="openFormation(inscription.formationId)">
+                {{ inscription.formationTitre }}
+              </a>
+            </td>
+
+            <td>
+              <span *ngIf="inscription.formationDateDebut && inscription.formationDateFin; else noDates">
+                {{ inscription.formationDateDebut | date:'dd/MM/yyyy' }} →
+                {{ inscription.formationDateFin | date:'dd/MM/yyyy' }}
+              </span>
+              <ng-template #noDates>-</ng-template>
+            </td>
+
+            <td>{{ inscription.dateInscription | date:'dd/MM/yyyy' }}</td>
+
+            <td class="actions">
+              <ng-container *ngIf="acceptConfirmId === inscription.id; else normalActions">
+                <span class="confirm-text">Confirmer ?</span>
+                <button class="btn-success-sm" (click)="accepter(inscription.id)">Oui</button>
+                <button class="btn-ghost-sm" (click)="cancelAccept()">Non</button>
+              </ng-container>
+
+              <ng-template #normalActions>
+                <button class="btn-success" (click)="confirmAccept(inscription.id)">✓ Accepter</button>
+                <button class="btn-danger" (click)="openRejectModal(inscription)">✗ Rejeter</button>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">‹</button>
+      <button
+        *ngFor="let page of pages"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)">
+        {{ page + 1 }}
+      </button>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage + 1 >= totalPages">›</button>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" *ngIf="rejectTarget" (click)="closeRejectModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>Confirmer le rejet</h3>
+    <p>
+      Vous allez rejeter l'inscription de
+      <strong>{{ rejectTarget.apprenantPrenom }} {{ rejectTarget.apprenantNom }}</strong>
+      pour <strong>{{ rejectTarget.formationTitre }}</strong>.
+    </p>
+
+    <label for="motif">Motif du rejet</label>
+    <textarea id="motif" rows="4" [(ngModel)]="rejectReason" placeholder="Motif obligatoire"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" (click)="closeRejectModal()">Annuler</button>
+      <button class="btn-danger" (click)="reject()" [disabled]="!rejectReason.trim() || rejectLoading">
+        <span *ngIf="!rejectLoading">Confirmer le rejet</span>
+        <span *ngIf="rejectLoading" class="spinner-inline"></span>
+      </button>
+    </div>
+  </div>
+</div>

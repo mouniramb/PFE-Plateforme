@@ -1,0 +1,67 @@
+<div class="page">
+  <header class="topbar">
+    <a routerLink="/catalogue" class="brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-text">FormaPro</span>
+    </a>
+
+    <nav class="topbar-nav">
+      <a routerLink="/catalogue" class="nav-link">Catalogue</a>
+      <a routerLink="/mes-inscriptions" class="nav-link nav-link--active">Mes inscriptions</a>
+    </nav>
+
+    <button class="btn-logout" (click)="logout()">Déconnexion</button>
+  </header>
+
+  <section class="header-block">
+    <h1>Mes inscriptions</h1>
+    <p>Suivez l'état de vos demandes d'inscription aux formations.</p>
+  </section>
+
+  <div class="alert alert-success" *ngIf="successMessage">✓ {{ successMessage }}</div>
+  <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement de vos inscriptions...</p>
+  </div>
+
+  <section class="inscriptions-list" *ngIf="!isLoading && inscriptions.length > 0">
+    <article class="inscription-card" *ngFor="let inscription of inscriptions">
+      <div class="card-top">
+        <span [class]="getStatusClass(inscription.statut)">{{ getStatusLabel(inscription.statut) }}</span>
+      </div>
+
+      <h3>{{ inscription.formationTitre }}</h3>
+
+      <div class="meta">📅 {{ inscription.formationDateDebut | date:'dd/MM/yyyy' }} → {{ inscription.formationDateFin | date:'dd/MM/yyyy' }}</div>
+      <div class="meta">🕘 Demande envoyée le {{ inscription.dateInscription | date:'dd/MM/yyyy' }}</div>
+
+      <div class="motif" *ngIf="inscription.statut === 'REJETEE' && inscription.motifRejet">
+        <strong>Motif du rejet :</strong>
+        <p>{{ inscription.motifRejet }}</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn-outline" (click)="openFormation(inscription.formationId)">Voir la formation</button>
+
+        <ng-container *ngIf="inscription.statut === 'EN_ATTENTE'">
+          <ng-container *ngIf="cancelConfirmId === inscription.id; else cancelBtn">
+            <span class="confirm-text">Confirmer ?</span>
+            <button class="btn-danger-sm" (click)="annulerInscription(inscription.id)">Oui</button>
+            <button class="btn-ghost-sm" (click)="cancelInline()">Non</button>
+          </ng-container>
+
+          <ng-template #cancelBtn>
+            <button class="btn-danger" (click)="confirmCancel(inscription.id)">Annuler</button>
+          </ng-template>
+        </ng-container>
+      </div>
+    </article>
+  </section>
+
+  <section class="empty-state" *ngIf="!isLoading && inscriptions.length === 0">
+    <p>Vous n'avez encore aucune inscription.</p>
+    <a routerLink="/catalogue" class="btn-cta">Parcourir le catalogue</a>
+  </section>
+</div>

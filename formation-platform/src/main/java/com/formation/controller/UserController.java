@@ -29,6 +29,7 @@ public class UserController {
      * Retourne le profil de l'utilisateur connecté
      */
     @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> getMyProfile(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(UserResponse.fromUser(user));

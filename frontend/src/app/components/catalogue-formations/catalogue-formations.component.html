@@ -1,0 +1,108 @@
+<div class="catalogue-page">
+  <header class="topbar">
+    <a routerLink="/catalogue" class="brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-text">FormaPro</span>
+    </a>
+
+    <nav class="topbar-nav">
+      <a routerLink="/catalogue" class="nav-link nav-link--active">Catalogue</a>
+      <a *ngIf="isApprenant()" routerLink="/mes-inscriptions" class="nav-link">Mes inscriptions</a>
+      <a *ngIf="isAdmin()" routerLink="/admin/dashboard" class="nav-link">Admin</a>
+      <a *ngIf="isFormateur()" routerLink="/formateur/dashboard" class="nav-link">Formateur</a>
+    </nav>
+
+    <button *ngIf="isLoggedIn()" class="btn-logout" (click)="logout()">Déconnexion</button>
+    <button *ngIf="!isLoggedIn()" class="btn-login" (click)="goToLogin()">Connexion</button>
+  </header>
+
+  <section class="hero">
+    <h1>Formez-vous aux métiers du numérique</h1>
+    <p>Découvrez des parcours concrets, animés par des formateurs experts.</p>
+
+    <div class="search-wrap">
+      <input
+        type="text"
+        placeholder="Rechercher une formation par titre ou description..."
+        [(ngModel)]="searchTerm" />
+    </div>
+
+    <p class="results-count">{{ filteredFormations.length }} formations disponibles</p>
+  </section>
+
+  <div class="alerts">
+    <div class="alert alert-success" *ngIf="successMessage">✓ {{ successMessage }}</div>
+    <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement du catalogue...</p>
+  </div>
+
+  <section class="cards-grid" *ngIf="!isLoading">
+    <article class="formation-card" *ngFor="let formation of filteredFormations">
+      <div class="card-head">
+        <span [class]="getStatusClass(formation.statut)">{{ getStatusLabel(formation.statut) }}</span>
+        <span class="badge badge--full" *ngIf="!formation.placesDisponibles">Complet</span>
+      </div>
+
+      <h2>{{ formation.titre }}</h2>
+      <p class="description">{{ truncateDescription(formation.description) }}</p>
+
+      <div class="meta-row">📅 {{ formation.dateDebut | date:'dd/MM/yyyy' }} → {{ formation.dateFin | date:'dd/MM/yyyy' }}</div>
+      <div class="meta-row">⏱ {{ formation.duree }} heures</div>
+      <div class="meta-row" [class.meta-row--full]="!formation.placesDisponibles">
+        👥 {{ formation.placesRestantes }} places restantes
+      </div>
+      <div class="meta-row">👤 {{ getPrimaryFormateur(formation) }}</div>
+
+      <div class="card-footer">
+        <div class="price">{{ formation.prix | currency:'EUR':'symbol':'1.0-0' }}</div>
+        <div class="actions">
+          <a class="btn-detail" [routerLink]="['/formations', formation.id]">Détails</a>
+
+          <button
+            *ngIf="canInscrire(formation)"
+            class="btn-cta"
+            (click)="openInscriptionModal(formation)">
+            S'inscrire
+          </button>
+
+          <button
+            *ngIf="isApprenant() && !formation.placesDisponibles"
+            class="btn-disabled"
+            disabled>
+            Complet
+          </button>
+
+          <button
+            *ngIf="!isLoggedIn()"
+            class="btn-login-inline"
+            (click)="goToLogin()">
+            Se connecter
+          </button>
+        </div>
+      </div>
+    </article>
+  </section>
+</div>
+
+<div class="modal-overlay" *ngIf="selectedFormation" (click)="closeInscriptionModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>Confirmer l'inscription</h3>
+    <p>
+      Vous allez envoyer une demande d'inscription pour
+      <strong>{{ selectedFormation.titre }}</strong>.
+    </p>
+    <p>Votre demande sera soumise à validation par l'administrateur.</p>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" (click)="closeInscriptionModal()">Annuler</button>
+      <button class="btn-cta" (click)="confirmInscription()" [disabled]="inscriptionLoading">
+        <span *ngIf="!inscriptionLoading">Confirmer l'inscription</span>
+        <span *ngIf="inscriptionLoading" class="spinner-inline"></span>
+      </button>
+    </div>
+  </div>
+</div>

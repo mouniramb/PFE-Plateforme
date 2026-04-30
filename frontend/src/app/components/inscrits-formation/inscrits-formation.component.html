@@ -1,0 +1,101 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+
+    <nav class="sidebar-nav" *ngIf="isAdmin(); else formateurNav">
+      <a routerLink="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/admin/formations" class="nav-item nav-item--active">
+        <span class="nav-icon">◆</span>
+        <span>Formations</span>
+      </a>
+      <a routerLink="/admin/inscriptions" class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span>Inscriptions</span>
+      </a>
+      <a routerLink="/admin/formateurs" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>Formateurs</span>
+      </a>
+    </nav>
+
+    <ng-template #formateurNav>
+      <nav class="sidebar-nav">
+        <a routerLink="/formateur/dashboard" class="nav-item">
+          <span class="nav-icon">◈</span>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item nav-item--active">
+          <span class="nav-icon">◆</span>
+          <span>Inscrits formation</span>
+        </a>
+      </nav>
+    </ng-template>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">{{ isAdmin() ? 'Administrateur' : 'Formateur' }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Déconnexion">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <a [routerLink]="getRetourLink()" class="back-link">← Retour</a>
+
+    <div class="header-row">
+      <div>
+        <h1>Apprenants inscrits</h1>
+        <p *ngIf="formation">Formation : {{ formation.titre }}</p>
+      </div>
+      <button class="btn-export" (click)="exportCsv()" [disabled]="inscriptions.length === 0">⬇ Exporter CSV</button>
+    </div>
+
+    <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Chargement des apprenants...</p>
+    </div>
+
+    <div class="table-card" *ngIf="!isLoading">
+      <div class="empty-state" *ngIf="inscriptions.length === 0">
+        Aucun apprenant inscrit pour cette formation.
+      </div>
+
+      <table *ngIf="inscriptions.length > 0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Apprenant</th>
+            <th>Email</th>
+            <th>Date inscription</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let inscription of inscriptions; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>
+              <div class="user-cell">
+                <div class="avatar">{{ inscription.apprenantPrenom.charAt(0) }}{{ inscription.apprenantNom.charAt(0) }}</div>
+                <span>{{ inscription.apprenantPrenom }} {{ inscription.apprenantNom }}</span>
+              </div>
+            </td>
+            <td>{{ inscription.apprenantEmail }}</td>
+            <td>{{ inscription.dateInscription | date:'dd/MM/yyyy' }}</td>
+            <td><span class="badge badge--accepted">ACCEPTEE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

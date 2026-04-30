@@ -8,8 +8,14 @@
       <a routerLink="/admin/dashboard" class="nav-item nav-item--active">
         <span class="nav-icon">◈</span><span>Tableau de bord</span>
       </a>
+      <a routerLink="/admin/formations" class="nav-item">
+        <span class="nav-icon">◆</span><span>Formations</span>
+      </a>
+      <a routerLink="/admin/inscriptions" class="nav-item">
+        <span class="nav-icon">◉</span><span>Inscriptions</span>
+      </a>
       <a routerLink="/admin/formateurs" class="nav-item">
-        <span class="nav-icon">◉</span><span>Formateurs</span>
+        <span class="nav-icon">▣</span><span>Formateurs</span>
       </a>
     </nav>
     <div class="sidebar-user">
@@ -57,15 +63,26 @@
       <div class="stat-card stat-card--green">
         <div class="stat-icon">◆</div>
         <div class="stat-info">
-          <span class="stat-value">—</span>
+          <span class="stat-value">{{ isLoading ? '—' : formationsCount }}</span>
           <span class="stat-label">Formations</span>
         </div>
+        <a routerLink="/admin/formations" class="stat-link">Gérer →</a>
       </div>
     </div>
 
     <div class="quick-actions">
       <h2>Actions rapides</h2>
       <div class="actions-grid">
+        <a routerLink="/admin/formations/create" class="action-card">
+          <span class="action-icon">+</span>
+          <span class="action-title">Créer une formation</span>
+          <span class="action-desc">Ajouter une nouvelle formation au catalogue</span>
+        </a>
+        <a routerLink="/admin/inscriptions" class="action-card">
+          <span class="action-icon">✓</span>
+          <span class="action-title">Valider les inscriptions</span>
+          <span class="action-desc">Approuver ou rejeter les demandes en attente</span>
+        </a>
         <a routerLink="/admin/formateurs" class="action-card">
           <span class="action-icon">+</span>
           <span class="action-title">Ajouter un formateur</span>

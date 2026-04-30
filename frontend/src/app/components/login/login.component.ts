@@ -60,10 +60,15 @@ export class LoginComponent implements OnInit {
 
   private redirectByRole(): void {
     const user = this.authService.getCurrentUser();
+    
     if (user?.role === 'ADMIN') {
       this.router.navigate(['/admin/dashboard']);
+    } else if (user?.role === 'FORMATEUR') {
+      this.router.navigate(['/formateur/dashboard']);
+    } else if (user?.role === 'APPRENANT') {
+      this.router.navigate(['/catalogue']);
     } else {
-      this.errorMessage = 'Acces reserve aux administrateurs.';
+      this.errorMessage = 'Rôle utilisateur non reconnu.';
       this.authService.logout();
     }
   }

@@ -1,0 +1,159 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/admin/formations" class="nav-item nav-item--active">
+        <span class="nav-icon">◆</span>
+        <span>Formations</span>
+      </a>
+      <a routerLink="/admin/inscriptions" class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span>Inscriptions</span>
+      </a>
+      <a routerLink="/admin/formateurs" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>Formateurs</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Administrateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Déconnexion">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <a class="back-link" (click)="goBack()">← Retour aux formations</a>
+
+    <div class="page-header">
+      <h1>{{ isEditMode ? 'Modifier la formation' : 'Créer une formation' }}</h1>
+      <p>Complétez les informations puis enregistrez.</p>
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage">✓ {{ successMessage }}</div>
+    <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Chargement de la formation...</p>
+    </div>
+
+    <form class="form-card" *ngIf="!isLoading" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="grid-two">
+        <div class="field" [class.field--error]="form.get('titre')?.invalid && form.get('titre')?.touched">
+          <label>Titre</label>
+          <input type="text" formControlName="titre" placeholder="Java Spring Boot" />
+          <span class="error" *ngIf="form.get('titre')?.errors?.['required'] && form.get('titre')?.touched">
+            Le titre est obligatoire.
+          </span>
+          <span class="error" *ngIf="form.get('titre')?.errors?.['minlength'] && form.get('titre')?.touched">
+            Le titre doit contenir au moins 3 caractères.
+          </span>
+        </div>
+
+        <div class="field" [class.field--error]="form.get('duree')?.invalid && form.get('duree')?.touched">
+          <label>Durée (heures)</label>
+          <input type="number" min="1" formControlName="duree" />
+          <span class="error" *ngIf="form.get('duree')?.invalid && form.get('duree')?.touched">
+            La durée doit être supérieure à 0.
+          </span>
+        </div>
+      </div>
+
+      <div class="field" [class.field--error]="form.get('description')?.invalid && form.get('description')?.touched">
+        <label>Description</label>
+        <textarea rows="4" formControlName="description" placeholder="Description détaillée"></textarea>
+        <span class="error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
+          La description est obligatoire.
+        </span>
+      </div>
+
+      <div class="grid-two">
+        <div class="field" [class.field--error]="form.get('dateDebut')?.invalid && form.get('dateDebut')?.touched">
+          <label>Date début</label>
+          <input type="date" formControlName="dateDebut" />
+          <span class="error" *ngIf="form.get('dateDebut')?.invalid && form.get('dateDebut')?.touched">
+            Date de début obligatoire.
+          </span>
+        </div>
+
+        <div class="field" [class.field--error]="(form.get('dateFin')?.invalid && form.get('dateFin')?.touched) || form.errors?.['invalidDates']">
+          <label>Date fin</label>
+          <input type="date" formControlName="dateFin" />
+          <span class="error" *ngIf="form.get('dateFin')?.invalid && form.get('dateFin')?.touched">
+            Date de fin obligatoire.
+          </span>
+          <span class="error" *ngIf="form.errors?.['invalidDates']">
+            La date de fin doit être strictement après la date de début.
+          </span>
+        </div>
+      </div>
+
+      <div class="grid-three">
+        <div class="field" [class.field--error]="form.get('capaciteMax')?.invalid && form.get('capaciteMax')?.touched">
+          <label>Capacité max</label>
+          <input type="number" min="1" formControlName="capaciteMax" />
+          <span class="error" *ngIf="form.get('capaciteMax')?.invalid && form.get('capaciteMax')?.touched">
+            La capacité doit être supérieure à 0.
+          </span>
+        </div>
+
+        <div class="field" [class.field--error]="form.get('prix')?.invalid && form.get('prix')?.touched">
+          <label>Prix</label>
+          <input type="number" min="0" formControlName="prix" />
+          <span class="error" *ngIf="form.get('prix')?.invalid && form.get('prix')?.touched">
+            Le prix doit être supérieur ou égal à 0.
+          </span>
+        </div>
+
+        <div class="field" [class.field--error]="form.get('statut')?.invalid && form.get('statut')?.touched">
+          <label>Statut</label>
+          <select formControlName="statut">
+            <option *ngFor="let statut of statuts" [value]="statut">{{ statut }}</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="formateurs-section">
+        <h2>Formateurs disponibles</h2>
+        <p>Sélectionnez un ou plusieurs formateurs (optionnel).</p>
+
+        <div class="formateurs-grid">
+          <button
+            type="button"
+            class="formateur-item"
+            *ngFor="let formateur of formateurs"
+            [class.formateur-item--selected]="isSelected(formateur.id)"
+            (click)="toggleFormateur(formateur.id)">
+            <div class="avatar">{{ formateur.prenom.charAt(0) }}{{ formateur.nom.charAt(0) }}</div>
+            <div class="meta">
+              <strong>{{ formateur.prenom }} {{ formateur.nom }}</strong>
+              <span>{{ formateur.email }}</span>
+            </div>
+            <span class="check">{{ isSelected(formateur.id) ? '✓' : '+' }}</span>
+          </button>
+        </div>
+      </section>
+
+      <div class="actions-row">
+        <button class="btn-ghost" type="button" (click)="goBack()">Annuler</button>
+        <button class="btn-primary" type="submit" [disabled]="formLoading">
+          <span *ngIf="!formLoading">{{ isEditMode ? 'Enregistrer les modifications' : 'Créer la formation' }}</span>
+          <span *ngIf="formLoading" class="spinner-inline"></span>
+        </button>
+      </div>
+    </form>
+  </main>
+</div>

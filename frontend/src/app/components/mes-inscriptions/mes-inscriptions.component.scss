@@ -1,0 +1,314 @@
+:host {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  color: #0D0F14;
+}
+
+$ink: #0D0F14;
+$surface: #F7F8FA;
+$white: #FFFFFF;
+$accent: #2563FF;
+$accent-2: #7C3AFF;
+$border: #E2E6EF;
+$muted: #6B7280;
+$error: #EF4444;
+
+.page {
+  min-height: 100vh;
+  background: $surface;
+  padding: 1.2rem 1.4rem 2rem;
+}
+
+.topbar {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0.9rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+
+  .brand-icon {
+    color: $accent-2;
+    font-size: 1.25rem;
+  }
+
+  .brand-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: $ink;
+  }
+}
+
+.topbar-nav {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: $muted;
+  font-weight: 600;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+
+  &:hover {
+    background: rgba(37, 99, 255, 0.08);
+    color: $ink;
+  }
+
+  &.nav-link--active {
+    background: rgba(37, 99, 255, 0.14);
+    color: $ink;
+  }
+}
+
+.btn-logout {
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  padding: 0 0.9rem;
+  font-weight: 600;
+  background: $ink;
+  color: #fff;
+  cursor: pointer;
+}
+
+.header-block {
+  max-width: 1000px;
+  margin: 1.5rem auto 1rem;
+
+  h1 {
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+  }
+
+  p {
+    margin-top: 0.35rem;
+    color: $muted;
+  }
+}
+
+.alert {
+  max-width: 1000px;
+  margin: 0 auto 0.8rem;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+
+  &.alert-success {
+    color: #085041;
+    background: #E1F5EE;
+    border: 1px solid rgba(8, 80, 65, 0.2);
+  }
+
+  &.alert-error {
+    color: #791F1F;
+    background: #FCEBEB;
+    border: 1px solid rgba(121, 31, 31, 0.2);
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 3rem;
+  color: $muted;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba($accent, 0.2);
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.inscriptions-list {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.inscription-card {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    margin: 0.45rem 0;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+  }
+}
+
+.card-top {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  &--attente {
+    background: #FAEEDA;
+    color: #633806;
+  }
+
+  &--acceptee {
+    background: #E1F5EE;
+    color: #085041;
+  }
+
+  &--rejetee {
+    background: #FCEBEB;
+    color: #791F1F;
+  }
+
+  &--annulee {
+    background: #F1EFE8;
+    color: #444441;
+  }
+}
+
+.meta {
+  color: $muted;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.motif {
+  margin-top: 0.7rem;
+  border: 1px solid rgba(121, 31, 31, 0.25);
+  background: #FCEBEB;
+  border-radius: 10px;
+  padding: 0.7rem;
+  color: #791F1F;
+
+  p {
+    margin-top: 0.35rem;
+  }
+}
+
+.actions {
+  margin-top: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.btn-outline,
+.btn-danger,
+.btn-danger-sm,
+.btn-ghost-sm,
+.btn-cta {
+  height: 34px;
+  border-radius: 8px;
+  padding: 0 0.85rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.btn-outline {
+  border: 1px solid $border;
+  background: #fff;
+  color: $ink;
+}
+
+.btn-danger {
+  border: none;
+  background: $error;
+  color: #fff;
+}
+
+.btn-danger-sm,
+.btn-ghost-sm {
+  height: 26px;
+  font-size: 0.76rem;
+  padding: 0 0.6rem;
+}
+
+.btn-danger-sm {
+  border: none;
+  background: $error;
+  color: #fff;
+}
+
+.btn-ghost-sm {
+  border: 1px solid $border;
+  background: #fff;
+  color: $ink;
+}
+
+.confirm-text {
+  color: #791F1F;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.empty-state {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 2rem;
+  text-align: center;
+
+  p {
+    color: $muted;
+    margin-bottom: 0.8rem;
+  }
+}
+
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  border: none;
+  background: $accent;
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 0.8rem 0.75rem 1.2rem;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

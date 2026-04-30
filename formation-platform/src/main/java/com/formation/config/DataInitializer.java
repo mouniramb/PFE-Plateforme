@@ -19,6 +19,8 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        log.info("🚀 Initialisation des données par défaut...");
+        
         // Créer l'administrateur par défaut s'il n'existe pas
         if (!userRepository.existsByEmail("admin@formation.com")) {
             User admin = User.builder()
@@ -29,7 +31,35 @@ public class DataInitializer implements CommandLineRunner {
                     .role(Role.ADMIN)
                     .build();
             userRepository.save(admin);
-            log.info("✅ Administrateur par défaut créé : admin@formation.com / Admin@123");
+            log.info("✅ Administrateur créé : admin@formation.com / Admin@123");
         }
+
+        // Créer un apprenant par défaut s'il n'existe pas
+        if (!userRepository.existsByEmail("apprenant1@test.com")) {
+            User apprenant = User.builder()
+                    .nom("Dupont")
+                    .prenom("Jean")
+                    .email("apprenant1@test.com")
+                    .password(passwordEncoder.encode("Apprenant@123"))
+                    .role(Role.APPRENANT)
+                    .build();
+            userRepository.save(apprenant);
+            log.info("✅ Apprenant créé : apprenant1@test.com / Apprenant@123");
+        }
+
+        // Créer un formateur par défaut s'il n'existe pas
+        if (!userRepository.existsByEmail("formateur1@test.com")) {
+            User formateur = User.builder()
+                    .nom("Martin")
+                    .prenom("Pierre")
+                    .email("formateur1@test.com")
+                    .password(passwordEncoder.encode("Formateur@123"))
+                    .role(Role.FORMATEUR)
+                    .build();
+            userRepository.save(formateur);
+            log.info("✅ Formateur créé : formateur1@test.com / Formateur@123");
+        }
+        
+        log.info("✅ Initialisation des données terminée!");
     }
 }

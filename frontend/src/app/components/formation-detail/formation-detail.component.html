@@ -1,0 +1,142 @@
+<div class="page">
+  <header class="topbar">
+    <a routerLink="/catalogue" class="brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-text">FormaPro</span>
+    </a>
+
+    <nav class="topbar-nav">
+      <a routerLink="/catalogue" class="nav-link">Catalogue</a>
+      <a *ngIf="isApprenant()" routerLink="/mes-inscriptions" class="nav-link">Mes inscriptions</a>
+      <a *ngIf="isAdmin()" routerLink="/admin/dashboard" class="nav-link">Admin</a>
+      <a *ngIf="isFormateur()" routerLink="/formateur/dashboard" class="nav-link">Formateur</a>
+    </nav>
+
+    <button *ngIf="isLoggedIn()" class="btn-logout" (click)="logout()">Déconnexion</button>
+    <button *ngIf="!isLoggedIn()" class="btn-login" (click)="goToLogin()">Connexion</button>
+  </header>
+
+  <div class="alert alert-success" *ngIf="successMessage">✓ {{ successMessage }}</div>
+  <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement de la formation...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && formation as item">
+    <div class="breadcrumb">
+      <a routerLink="/catalogue">Catalogue</a>
+      <span>›</span>
+      <span>{{ item.titre }}</span>
+    </div>
+
+    <section class="layout">
+      <article class="content-column">
+        <div class="top-badges">
+          <span [class]="getStatusClass(item.statut)">{{ getStatusLabel(item.statut) }}</span>
+          <span class="badge badge--full" *ngIf="!item.placesDisponibles">Complet</span>
+        </div>
+
+        <h1>{{ item.titre }}</h1>
+        <p class="description">{{ item.description }}</p>
+
+        <section class="formateurs">
+          <h2>Formateurs</h2>
+
+          <div class="formateurs-list" *ngIf="item.formateurs.length > 0; else noFormateur">
+            <div class="formateur-item" *ngFor="let formateur of item.formateurs">
+              <div class="avatar">{{ formateur.prenom.charAt(0) }}{{ formateur.nom.charAt(0) }}</div>
+              <div class="meta">
+                <strong>{{ formateur.prenom }} {{ formateur.nom }}</strong>
+                <span>{{ formateur.email }}</span>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noFormateur>
+            <p class="muted">Aucun formateur assigné.</p>
+          </ng-template>
+        </section>
+
+        <section class="inscrits" *ngIf="isAdmin() || isFormateur()">
+          <h2>Apprenants inscrits acceptés</h2>
+
+          <div class="empty-inscrits" *ngIf="inscritsAcceptes.length === 0">
+            Aucun apprenant accepté pour le moment.
+          </div>
+
+          <table *ngIf="inscritsAcceptes.length > 0">
+            <thead>
+              <tr>
+                <th>Apprenant</th>
+                <th>Email</th>
+                <th>Date d'inscription</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let inscrit of inscritsAcceptes">
+                <td>{{ inscrit.apprenantPrenom }} {{ inscrit.apprenantNom }}</td>
+                <td>{{ inscrit.apprenantEmail }}</td>
+                <td>{{ inscrit.dateInscription | date:'dd/MM/yyyy' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </article>
+
+      <aside class="sidebar-column">
+        <div class="sticky-card">
+          <div class="price">{{ item.prix | currency:'EUR':'symbol':'1.0-0' }}</div>
+
+          <button class="btn-cta" *ngIf="isApprenant() && item.placesDisponibles" (click)="openInscriptionModal()">
+            S'inscrire
+          </button>
+
+          <button class="btn-full" *ngIf="isApprenant() && !item.placesDisponibles" disabled>
+            Formation complète
+          </button>
+
+          <button class="btn-login-inline" *ngIf="!isLoggedIn()" (click)="goToLogin()">
+            Se connecter pour s'inscrire
+          </button>
+
+          <hr />
+
+          <div class="info-row"><span>Début</span><strong>{{ item.dateDebut | date:'dd/MM/yyyy' }}</strong></div>
+          <div class="info-row"><span>Fin</span><strong>{{ item.dateFin | date:'dd/MM/yyyy' }}</strong></div>
+          <div class="info-row"><span>Durée</span><strong>{{ item.duree }} h</strong></div>
+          <div class="info-row"><span>Places</span><strong>{{ item.placesRestantes }}/{{ item.capaciteMax }}</strong></div>
+
+          <div class="progress">
+            <div class="progress-bar" [class.progress-bar--full]="!item.placesDisponibles" [style.width.%]="getCapacitePourcentage()"></div>
+          </div>
+
+          <div class="admin-links" *ngIf="isAdmin()">
+            <a [routerLink]="['/admin/formations/edit', item.id]">Modifier</a>
+            <a [routerLink]="['/admin/formations', item.id, 'inscrits']">Voir tous les inscrits</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </ng-container>
+</div>
+
+<div class="modal-overlay" *ngIf="showInscriptionModal" (click)="closeInscriptionModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>Confirmer l'inscription</h3>
+    <p>
+      Vous allez envoyer une demande d'inscription pour
+      <strong>{{ formation?.titre }}</strong>.
+    </p>
+    <p>Votre demande sera soumise à validation par l'administrateur.</p>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" (click)="closeInscriptionModal()">Annuler</button>
+      <button class="btn-cta" (click)="confirmInscription()" [disabled]="isInscriptionLoading">
+        <span *ngIf="!isInscriptionLoading">Confirmer l'inscription</span>
+        <span *ngIf="isInscriptionLoading" class="spinner-inline"></span>
+      </button>
+    </div>
+  </div>
+</div>

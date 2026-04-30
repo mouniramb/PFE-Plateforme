@@ -1,0 +1,144 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/admin/formations" class="nav-item nav-item--active">
+        <span class="nav-icon">◆</span>
+        <span>Formations</span>
+      </a>
+      <a routerLink="/admin/inscriptions" class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span>Inscriptions</span>
+      </a>
+      <a routerLink="/admin/formateurs" class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span>Formateurs</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Administrateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Déconnexion">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Gestion des formations</h1>
+        <p>{{ totalElements }} formation{{ totalElements > 1 ? 's' : '' }}</p>
+      </div>
+
+      <button class="btn-primary" (click)="openCreate()">+ Nouvelle formation</button>
+    </div>
+
+    <div class="toolbar-card">
+      <label for="statusFilter">Filtrer par statut</label>
+      <select id="statusFilter" [value]="selectedStatut" (change)="onFilterChange($event)">
+        <option value="">Tous les statuts</option>
+        <option *ngFor="let statut of statuts" [value]="statut">{{ getStatutLabel(statut) }}</option>
+      </select>
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage">✓ {{ successMessage }}</div>
+    <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Chargement des formations...</p>
+    </div>
+
+    <div class="table-card" *ngIf="!isLoading">
+      <div class="empty-state" *ngIf="formations.length === 0">
+        <p>Aucune formation trouvée.</p>
+      </div>
+
+      <table *ngIf="formations.length > 0">
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>Dates</th>
+            <th>Durée</th>
+            <th>Places</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let formation of formations">
+            <td>
+              <strong>{{ formation.titre }}</strong>
+              <p class="muted">{{ formation.description }}</p>
+            </td>
+
+            <td>
+              <div>{{ formation.dateDebut | date:'dd/MM/yyyy' }}</div>
+              <div class="muted">au {{ formation.dateFin | date:'dd/MM/yyyy' }}</div>
+            </td>
+
+            <td>{{ formation.duree }} h</td>
+
+            <td>
+              <div class="progress-meta">
+                <span>{{ formation.capaciteActuelle }}/{{ formation.capaciteMax }}</span>
+                <span>{{ formation.placesRestantes }} restantes</span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar"
+                  [class.progress-bar--full]="!formation.placesDisponibles"
+                  [style.width.%]="getPlacesPercent(formation)">
+                </div>
+              </div>
+            </td>
+
+            <td>{{ formation.prix | currency:'EUR':'symbol':'1.0-0' }}</td>
+
+            <td>
+              <span [class]="getStatutClass(formation.statut)">{{ getStatutLabel(formation.statut) }}</span>
+            </td>
+
+            <td class="actions">
+              <ng-container *ngIf="deleteConfirmId === formation.id; else normalActions">
+                <span class="confirm-text">Confirmer ?</span>
+                <button class="btn-danger-sm" (click)="deleteFormation(formation.id)">Oui</button>
+                <button class="btn-ghost-sm" (click)="cancelDelete()">Non</button>
+              </ng-container>
+
+              <ng-template #normalActions>
+                <button class="btn-icon" title="Modifier" (click)="editFormation(formation.id)">✏</button>
+                <button class="btn-icon" title="Voir inscrits" (click)="viewInscrits(formation.id)">👥</button>
+                <button class="btn-icon btn-icon--danger" title="Supprimer" (click)="confirmDelete(formation.id)">🗑</button>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">‹</button>
+      <button
+        *ngFor="let page of pages"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)">
+        {{ page + 1 }}
+      </button>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage + 1 >= totalPages">›</button>
+    </div>
+  </main>
+</div>
