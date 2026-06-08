@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\mounira\\\\Desktop\\\\pfe\\\\formation-platform\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\mounira\\\\Desktop\\\\pfe\\\\formation-platform\\\\src\\\\main\\\\resources\\\\db\")",
+      "Bash(Out-Null)",
+      "Bash(mvn dependency:resolve -q)",
+      "Bash(mvn clean *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\mounira\\\\Desktop\\\\pfe\\\\frontend\\\\src\\\\app\\\\\" -Recurse -Include *.ts, *.html, *.scss | Select-Object FullName | Sort-Object FullName)",
+      "Bash(cd /c/Users/mounira/Desktop/pfe/frontend/src/app && find . -type f \\\\\\( -name \"*.ts\" -o -name \"*.html\" -o -name \"*.scss\" \\\\\\) | sort)",
+      "Read(//c/c/Users/mounira/Desktop/pfe/frontend/src/**)",
+      "Bash(dir \"c:\\\\Users\\\\mounira\\\\Desktop\\\\pfe\\\\frontend\\\\src\\\\app\\\\models\\\\\" /b 2>&1; echo \"---\"; dir \"c:\\\\Users\\\\mounira\\\\Desktop\\\\pfe\\\\frontend\\\\src\\\\app\\\\services\\\\\" /b)",
+      "Bash(dir \"c:\\\\Users\\\\mounira\\\\Desktop\\\\pfe\\\\frontend\\\\src\\\\app\\\\components\\\\\" /b 2>&1)",
+      "Bash(npx ng *)"
+    ]
+  }
+}
