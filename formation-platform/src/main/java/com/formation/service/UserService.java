@@ -125,6 +125,14 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
+    public List<UserResponse> getAllApprenants() {
+        return userRepository.findByRole(Role.APPRENANT)
+                .stream()
+                .map(UserResponse::fromUser)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public UserResponse getFormateurResponseById(Long id) {
         return UserResponse.fromUser(getFormateurById(id));
     }

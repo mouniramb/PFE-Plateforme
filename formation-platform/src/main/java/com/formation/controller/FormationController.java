@@ -1,11 +1,14 @@
 package com.formation.controller;
 
+import com.formation.dto.FormationConfigDTO;
 import com.formation.dto.FormationCreateDTO;
 import com.formation.dto.FormationResponseDTO;
 import com.formation.dto.FormationUpdateDTO;
 import com.formation.entity.Formation;
 import com.formation.entity.FormationStatut;
+import com.formation.entity.User;
 import com.formation.service.FormationService;
+import com.formation.service.PaiementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +37,7 @@ import java.time.LocalDate;
 public class FormationController {
 
     private final FormationService formationService;
+    private final PaiementService paiementService;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -120,5 +125,19 @@ public class FormationController {
                 formationService.searchFormations(keyword, pageable)
                         .map(FormationResponseDTO::fromEntity)
         );
+    }
+
+    @GetMapping("/{id}/config")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FORMATEUR') or hasRole('APPRENANT')")
+    public ResponseEntity<FormationConfigDTO> getFormationConfig(@PathVariable Long id) {
+        return ResponseEntity.ok(paiementService.getFormationConfig(id));
+    }
+
+    @PutMapping("/{id}/config")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<FormationConfigDTO> saveFormationConfig(
+            @PathVariable Long id,
+            @RequestBody FormationConfigDTO dto) {
+        return ResponseEntity.ok(paiementService.saveFormationConfig(id, dto));
     }
 }

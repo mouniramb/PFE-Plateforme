@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -77,7 +78,8 @@ public class Formation {
 
     @NotNull(message = "Le prix est obligatoire")
     @DecimalMin(value = "0.0", inclusive = true, message = "Le prix doit être >= 0")
-    @Column(nullable = false, precision = 10, scale = 2)
+    @DecimalMax(value = "800.0", inclusive = true, message = "Le prix ne peut pas dépasser 800 DT")
+    @Column(nullable = false, columnDefinition = "NUMERIC(10,2)")
     private BigDecimal prix;
 
     @Enumerated(EnumType.STRING)
@@ -103,6 +105,10 @@ public class Formation {
     @OneToMany(mappedBy = "formation", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Inscription> inscriptions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "formation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Seance> seances = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

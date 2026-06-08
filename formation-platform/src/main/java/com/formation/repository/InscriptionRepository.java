@@ -30,4 +30,8 @@ public interface InscriptionRepository extends JpaRepository<Inscription, Long> 
     List<Inscription> findByFormationIdAndStatut(Long formationId, InscriptionStatut statut);
 
     Page<Inscription> findByFormationFormateursIdAndStatut(Long formateurId, InscriptionStatut statut, Pageable pageable);
+
+    List<Inscription> findByApprenantIdAndStatut(Long apprenantId, InscriptionStatut statut);
+
+    Optional<Inscription> findByApprenantIdAndFormationId(Long apprenantId, Long formationId);
 }

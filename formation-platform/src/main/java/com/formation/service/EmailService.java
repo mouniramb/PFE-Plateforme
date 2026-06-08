@@ -2,7 +2,9 @@ package com.formation.service;
 
 import com.formation.entity.Formation;
 import com.formation.entity.Inscription;
+import com.formation.entity.Paiement;
 import com.formation.entity.User;
+import com.formation.entity.Seance;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -141,6 +143,133 @@ public class EmailService {
       sendEmail(admin.getEmail(), "Nouvelle demande d'inscription", body);
     }
 
+    // Sprint 3 - Seance Management Methods
+    public void sendSeanceAssignmentEmail(User formateur, Seance seance) {
+      String dateHeure = seance.getDateHeureDebut().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+      String salleInfo = seance.getSalle() != null ? seance.getSalle().getNom() : "À confirmer";
+      
+      String body = String.format("""
+          Bonjour %s %s,
+
+          Vous avez été affecté à une nouvelle séance.
+
+          Titre : %s
+          Formation : %s
+          Date et heure : %s
+          Salle : %s
+          Durée : %d minutes
+
+          Cordialement,
+          Plateforme de Formation
+          """,
+          formateur.getPrenom(),
+          formateur.getNom(),
+          seance.getTitre(),
+          seance.getFormation().getTitre(),
+          dateHeure,
+          salleInfo,
+          seance.getDureeMinutes());
+      sendEmail(formateur.getEmail(), "Nouvelle séance assignée", body);
+    }
+
+    public void sendSeanceModificationEmail(User formateur, Seance seance) {
+      String dateHeure = seance.getDateHeureDebut().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+      String salleInfo = seance.getSalle() != null ? seance.getSalle().getNom() : "À confirmer";
+      
+      String body = String.format("""
+          Bonjour %s %s,
+
+          Une séance a été modifiée.
+
+          Titre : %s
+          Formation : %s
+          Nouvelle date et heure : %s
+          Salle : %s
+          Durée : %d minutes
+
+          Cordialement,
+          Plateforme de Formation
+          """,
+          formateur.getPrenom(),
+          formateur.getNom(),
+          seance.getTitre(),
+          seance.getFormation().getTitre(),
+          dateHeure,
+          salleInfo,
+          seance.getDureeMinutes());
+      sendEmail(formateur.getEmail(), "Modification de séance", body);
+    }
+
+    public void sendSeanceAnnulationEmail(User formateur, Seance seance) {
+      String dateHeure = seance.getDateHeureDebut().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+      
+      String body = String.format("""
+          Bonjour %s %s,
+
+          La séance suivante a été annulée.
+
+          Titre : %s
+          Formation : %s
+          Date et heure prévue : %s
+
+          Cordialement,
+          Plateforme de Formation
+          """,
+          formateur.getPrenom(),
+          formateur.getNom(),
+          seance.getTitre(),
+          seance.getFormation().getTitre(),
+          dateHeure);
+      sendEmail(formateur.getEmail(), "Annulation de séance", body);
+    }
+
+    public void sendPaiementConfirmationEmail(User apprenant, Paiement paiement) {
+        String formationTitre = paiement.getFormation() != null ? paiement.getFormation().getTitre() : "N/A";
+        String body = String.format("""
+            Bonjour %s %s,
+
+            Votre paiement a bien été enregistré et est en attente de validation.
+
+            Formation        : %s
+            Mode             : %s
+            Montant payé     : %.2f DT
+            Date de paiement : %s
+
+            Cordialement,
+            Plateforme de Formation
+            """,
+            apprenant.getPrenom(), apprenant.getNom(),
+            formationTitre,
+            paiement.getModePaiement(),
+            paiement.getMontantNet() != null ? paiement.getMontantNet() : paiement.getMontant(),
+            paiement.getDatePaiement());
+        sendEmail(apprenant.getEmail(), "Paiement enregistré - " + formationTitre, body);
+    }
+
+    public void sendPaiementValidationEmail(User apprenant, Paiement paiement) {
+        String formationTitre = paiement.getFormation() != null ? paiement.getFormation().getTitre() : "N/A";
+        String body = String.format("""
+            Bonjour %s %s,
+
+            Votre paiement a été validé par notre équipe.
+
+            Formation        : %s
+            Mode             : %s
+            Montant validé   : %.2f DT
+            Date de paiement : %s
+            Statut           : VALIDÉ
+
+            Cordialement,
+            Plateforme de Formation
+            """,
+            apprenant.getPrenom(), apprenant.getNom(),
+            formationTitre,
+            paiement.getModePaiement(),
+            paiement.getMontantNet() != null ? paiement.getMontantNet() : paiement.getMontant(),
+            paiement.getDatePaiement());
+        sendEmail(apprenant.getEmail(), "Paiement validé - " + formationTitre, body);
+    }
+
     private void sendEmail(String toEmail, String subject, String body) {
       try {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -171,10 +300,7 @@ public class EmailService {
                 
                 Pour vous connecter, rendez-vous sur :
                 http://localhost:4200/login
-                
-                ⚠️  Pour des raisons de sécurité, nous vous conseillons de changer
-                votre mot de passe dès votre première connexion.
-                
+
                 Cordialement,
                 L'équipe de la Plateforme de Formation
                 """,

@@ -12,8 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -50,6 +49,34 @@ public class User implements UserDetails {
 
     @Column(name = "date_creation", updatable = false)
     private LocalDateTime dateCreation;
+
+    // ========== Sprint 3 Relations - Seances ==========
+    @OneToMany(mappedBy = "formateur", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Seance> seancesCommeFormateur = new ArrayList<>();
+
+    // ========== Sprint 3 Relations - Inscriptions ==========
+    @OneToMany(mappedBy = "apprenant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Inscription> inscriptionsCommeApprenant = new ArrayList<>();
+
+    // ========== Sprint 3 Relations - Presences ==========
+    @OneToMany(mappedBy = "apprenant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Presence> presencesCommeApprenant = new ArrayList<>();
+
+    @OneToMany(mappedBy = "enregistrePar", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Presence> presencesEnregistrees = new ArrayList<>();
+
+    // ========== Sprint 3 Relations - Notes ==========
+    @OneToMany(mappedBy = "apprenant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Note> notesCommeApprenant = new ArrayList<>();
+
+    @OneToMany(mappedBy = "enregistrePar", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Note> notesEnregistrees = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

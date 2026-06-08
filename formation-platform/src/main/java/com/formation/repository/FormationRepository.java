@@ -18,6 +18,8 @@ public interface FormationRepository extends JpaRepository<Formation, Long> {
 
     Page<Formation> findByStatut(FormationStatut statut, Pageable pageable);
 
+    boolean existsByTitre(String titre);
+
     @Query("SELECT DISTINCT f FROM Formation f JOIN f.formateurs formateur WHERE formateur.id = :formateurId")
     Page<Formation> findByFormateurId(@Param("formateurId") Long formateurId, Pageable pageable);
 

@@ -27,6 +27,66 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    // Sprint 3 - Salles
+    @ExceptionHandler(SalleNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleSalleNotFound(SalleNotFoundException ex) {
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(CannotDeleteSalleException.class)
+    public ResponseEntity<Map<String, Object>> handleCannotDeleteSalle(CannotDeleteSalleException ex) {
+        return buildError(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    // Sprint 3 - Seances
+    @ExceptionHandler(SeanceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleSeanceNotFound(SeanceNotFoundException ex) {
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(CannotDeleteSeanceException.class)
+    public ResponseEntity<Map<String, Object>> handleCannotDeleteSeance(CannotDeleteSeanceException ex) {
+        return buildError(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidSeanceDatesException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidSeanceDates(InvalidSeanceDatesException ex) {
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(ConflitHoraireException.class)
+    public ResponseEntity<Map<String, Object>> handleConflitHoraire(ConflitHoraireException ex) {
+        return buildError(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    // Sprint 3 - Presences
+    @ExceptionHandler(PresenceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handlePresenceNotFound(PresenceNotFoundException ex) {
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    // Sprint 3 - Notes
+    @ExceptionHandler(NoteNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNoteNotFound(NoteNotFoundException ex) {
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(NoteInvalideException.class)
+    public ResponseEntity<Map<String, Object>> handleNoteInvalide(NoteInvalideException ex) {
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    // Sprint 3 - Permissions
+    @ExceptionHandler(FormateurNonResponsableException.class)
+    public ResponseEntity<Map<String, Object>> handleFormateurNonResponsable(FormateurNonResponsableException ex) {
+        return buildError(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler(ApprenantNonInscritException.class)
+    public ResponseEntity<Map<String, Object>> handleApprenantNonInscrit(ApprenantNonInscritException ex) {
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler({
             InscriptionAlreadyExistsException.class,
             InvalidFormationDatesException.class,
@@ -41,6 +101,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedActionException.class)
     public ResponseEntity<Map<String, Object>> handleUnauthorizedAction(UnauthorizedActionException ex) {
         return buildError(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    // Sprint 4 - Gestion financière
+    @ExceptionHandler(PaiementNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handlePaiementNotFound(PaiementNotFoundException ex) {
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(MontantInvalidException.class)
+    public ResponseEntity<Map<String, Object>> handleMontantInvalid(MontantInvalidException ex) {
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {
+        return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -42,9 +42,15 @@ public class UserController {
      * Lister tous les formateurs
      */
     @GetMapping("/formateurs")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FORMATEUR')")
     public ResponseEntity<List<UserResponse>> getAllFormateurs() {
         return ResponseEntity.ok(userService.getAllFormateurs());
+    }
+
+    @GetMapping("/apprenants")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('FORMATEUR')")
+    public ResponseEntity<List<UserResponse>> getAllApprenants() {
+        return ResponseEntity.ok(userService.getAllApprenants());
     }
 
     /**

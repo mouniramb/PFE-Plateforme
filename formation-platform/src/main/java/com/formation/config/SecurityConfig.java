@@ -58,6 +58,11 @@ public class SecurityConfig {
                         "/api/formations/search",
                         "/api/formations/*"
                     ).permitAll()
+                    .requestMatchers("/api/paiements-formateurs/**").authenticated()
+                    .requestMatchers("/api/tarifs/**").permitAll()
+                    .requestMatchers("/api/factures/**").permitAll()
+                    .requestMatchers("/api/rapports/**").permitAll()
+                    .requestMatchers("/api/statistiques/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
