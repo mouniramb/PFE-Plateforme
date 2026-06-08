@@ -17,6 +17,30 @@
       <a routerLink="/admin/formateurs" class="nav-item">
         <span class="nav-icon">▣</span><span>Formateurs</span>
       </a>
+      <a routerLink="/admin/planning" class="nav-item">
+        <span class="nav-icon">📅</span><span>Planning</span>
+      </a>
+      <a routerLink="/admin/salles" class="nav-item">
+        <span class="nav-icon">🏛</span><span>Salles</span>
+      </a>
+      <a routerLink="/admin/seances" class="nav-item">
+        <span class="nav-icon">📋</span><span>Séances</span>
+      </a>
+      <a routerLink="/admin/tarifs" class="nav-item">
+        <span class="nav-icon">💰</span><span>Tarifs</span>
+      </a>
+      <a routerLink="/admin/factures" class="nav-item">
+        <span class="nav-icon">📄</span><span>Factures</span>
+      </a>
+      <a routerLink="/admin/paiements" class="nav-item">
+        <span class="nav-icon">💳</span><span>Paiements</span>
+      </a>
+      <a routerLink="/admin/rapports" class="nav-item">
+        <span class="nav-icon">📈</span><span>Rapports</span>
+      </a>
+      <a routerLink="/admin/statistiques" class="nav-item">
+        <span class="nav-icon">📉</span><span>Statistiques</span>
+      </a>
     </nav>
     <div class="sidebar-user">
       <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
@@ -87,6 +111,21 @@
           <span class="action-icon">+</span>
           <span class="action-title">Ajouter un formateur</span>
           <span class="action-desc">Créer un compte et envoyer les identifiants</span>
+        </a>
+        <a routerLink="/admin/seances" class="action-card">
+          <span class="action-icon">📋</span>
+          <span class="action-title">Gérer les séances</span>
+          <span class="action-desc">Créer et planifier les séances de formation</span>
+        </a>
+        <a routerLink="/admin/salles" class="action-card">
+          <span class="action-icon">🏛</span>
+          <span class="action-title">Gérer les salles</span>
+          <span class="action-desc">Administrer les salles disponibles</span>
+        </a>
+        <a routerLink="/admin/planning" class="action-card">
+          <span class="action-icon">📅</span>
+          <span class="action-title">Voir le planning</span>
+          <span class="action-desc">Calendrier hebdomadaire de toutes les séances</span>
         </a>
       </div>
     </div>

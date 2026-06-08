@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>Gestion des Tarifs</h1>
+      <p class="subtitle">Gérez les tarifs de vos formations</p>
+    </div>
+    <button class="btn-primary" (click)="openAddModal()">+ Ajouter Tarif</button>
+  </div>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error-msg" *ngIf="error">{{ error }}</div>
+  <div class="loading-msg" *ngIf="loading">Chargement...</div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Formation (ID)</th>
+        <th>Prix Formation</th>
+        <th>Prix Séance</th>
+        <th>Montants Tranches</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tarif of tarifs">
+        <td>{{ tarif.formationId }}</td>
+        <td>{{ tarif.prixFormation }} DT</td>
+        <td>{{ tarif.prixParSeance }} DT</td>
+        <td>{{ tarif.montantsTranches }}</td>
+        <td>
+          <button class="btn-edit" (click)="openEditModal(tarif)">Éditer</button>
+          <button class="btn-delete" (click)="deleteTarif(tarif.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!loading && tarifs.length === 0" class="empty-msg">Aucun tarif enregistré</div>
+</div>
+
+<!-- Modal Ajouter / Éditer -->
+<div class="modal-overlay" *ngIf="showTarifModal" (click)="closeModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ editingTarif ? 'Éditer le tarif' : 'Nouveau tarif' }}</h3>
+      <button class="modal-close" (click)="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Formation (ID)</label>
+        <input type="number" [(ngModel)]="currentTarif.formationId">
+      </div>
+      <div class="form-group">
+        <label>Prix Formation (DT)</label>
+        <input type="number" [(ngModel)]="currentTarif.prixFormation">
+      </div>
+      <div class="form-group">
+        <label>Prix par Séance (DT)</label>
+        <input type="number" [(ngModel)]="currentTarif.prixParSeance">
+      </div>
+      <div class="form-group">
+        <label>Montants Tranches (ex: 200|200|200|200)</label>
+        <input type="text" [(ngModel)]="currentTarif.montantsTranches" placeholder="200|200|200|200">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+      <button class="btn-primary" (click)="saveTarif()">Enregistrer</button>
+    </div>
+  </div>
+</div>

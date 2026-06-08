@@ -300,8 +300,8 @@ table {
   .td-actions {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    white-space: nowrap;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 }
 
@@ -368,59 +368,42 @@ table {
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
-.btn-icon {
-  width: 32px;
-  height: 32px;
-  border: 1px solid $border;
-  border-radius: 7px;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  transition: all 0.2s;
-
-  &.btn-edit:hover {
-    background: rgba($accent, 0.08);
-    border-color: rgba($accent, 0.3);
-  }
-  &.btn-delete:hover {
-    background: rgba($error, 0.08);
-    border-color: rgba($error, 0.3);
-  }
-}
-
 .confirm-text {
   font-size: 0.8rem;
   color: $error;
-  font-weight: 500;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.btn-danger-sm {
-  height: 26px;
-  padding: 0 0.7rem;
-  background: $error;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 0.78rem;
+.btn-action {
+  padding: 6px 11px;
+  border-radius: 6px;
+  border: 1px solid transparent;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: background .14s, border-color .14s;
 
-  &:hover { opacity: 0.88; }
-}
-
-.btn-ghost-sm {
-  height: 26px;
-  padding: 0 0.7rem;
-  background: transparent;
-  color: $muted;
-  border: 1px solid $border;
-  border-radius: 5px;
-  font-size: 0.78rem;
-  cursor: pointer;
-
-  &:hover { background: rgba(0,0,0,0.04); }
+  &--edit {
+    background: #dbeafe; color: #1e40af; border-color: #93c5fd;
+    &:hover { background: #bfdbfe; border-color: #60a5fa; }
+  }
+  &--delete {
+    background: #fee2e2; color: #991b1b; border-color: #fca5a5;
+    &:hover { background: #fecaca; border-color: #f87171; }
+  }
+  &--danger {
+    background: #ef4444; color: #fff; border-color: #dc2626;
+    &:hover { background: #dc2626; }
+  }
+  &--ghost {
+    background: #f3f4f6; color: #4b5563; border-color: #d1d5db;
+    &:hover { background: #e5e7eb; }
+  }
 }
 
 // ─── Modal ────────────────────────────────────────────────────────────────────

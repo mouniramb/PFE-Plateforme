@@ -1,0 +1,172 @@
+// ─── Variables ──────────────────────────────────────────────────────
+$h       : 64px;   // hauteur navbar
+$accent  : #2563FF;
+$ink     : #0D0F14;
+$surface : #F7F8FA;
+$border  : #E2E6EF;
+$muted   : #6B7280;
+$white   : #ffffff;
+
+// ─── Shell ──────────────────────────────────────────────────────────
+.apprenant-shell {
+  min-height: 100vh;
+  background: $surface;
+}
+
+// ─── Navbar fixe ────────────────────────────────────────────────────
+.topnav {
+  position    : fixed;
+  top         : 0;
+  left        : 0;
+  right       : 0;
+  height      : $h;
+  background  : $white;
+  border-bottom: 1px solid $border;
+  box-shadow  : 0 1px 4px rgba(0,0,0,.06);
+  z-index     : 300;
+
+  // Flex : logo | liens (flex-1) | user
+  display        : flex;
+  align-items    : center;
+  padding        : 0 16px 0 20px;
+  gap            : 0;
+  overflow       : hidden;   // empêche le débordement global
+}
+
+// ─── Logo (shrink: 0 → ne se compresse jamais) ───────────────────────
+.nav-brand {
+  display      : flex;
+  align-items  : center;
+  gap          : 8px;
+  text-decoration: none;
+  flex-shrink  : 0;
+  margin-right : 20px;
+
+  .brand-icon { font-size: 22px; color: $accent; }
+  .brand-text { font-size: 17px; font-weight: 700; color: $ink; letter-spacing: -0.3px; }
+}
+
+// ─── Zone liens (scroll interne si trop étroit) ──────────────────────
+.nav-links {
+  flex         : 1;
+  min-width    : 0;          // permet la compression
+  display      : flex;
+  align-items  : center;
+  gap          : 2px;
+  overflow-x   : auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.nav-link {
+  display        : inline-flex;
+  align-items    : center;
+  padding        : 6px 11px;
+  border-radius  : 6px;
+  color          : $muted;
+  text-decoration: none;
+  font-size      : 13px;
+  font-weight    : 500;
+  white-space    : nowrap;
+  flex-shrink    : 0;
+  transition     : background .14s, color .14s;
+
+  &:hover            { background: rgba($accent,.07); color: $accent; }
+  &.nav-link--active { background: rgba($accent,.1); color: $accent; font-weight: 600; }
+}
+
+// ─── Zone utilisateur (shrink: 0 → toujours visible) ────────────────
+.nav-user {
+  display      : flex;
+  align-items  : center;
+  gap          : 10px;
+  flex-shrink  : 0;          // NE SE COMPRESSE JAMAIS
+  margin-left  : 12px;
+  padding-left : 12px;
+  border-left  : 1px solid $border;
+}
+
+// Avatar circulaire avec initiales
+.user-avatar {
+  width        : 34px;
+  height       : 34px;
+  border-radius: 50%;
+  background   : $accent;
+  color        : $white;
+  font-size    : 13px;
+  font-weight  : 700;
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+  text-transform: uppercase;
+  flex-shrink  : 0;
+  letter-spacing: 0.5px;
+}
+
+.user-name {
+  font-size   : 13px;
+  font-weight : 600;
+  color       : $ink;
+  white-space : nowrap;
+  max-width   : 140px;
+  overflow    : hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-logout {
+  padding       : 6px 14px;
+  border        : 1.5px solid $border;
+  border-radius : 6px;
+  background    : none;
+  color         : $muted;
+  font-size     : 13px;
+  font-weight   : 500;
+  cursor        : pointer;
+  white-space   : nowrap;
+  flex-shrink   : 0;
+  transition    : border-color .14s, color .14s, background .14s;
+
+  &:hover { border-color: #EF4444; color: #EF4444; background: #FFF5F5; }
+}
+
+.btn-login {
+  padding       : 6px 14px;
+  border        : 1.5px solid $accent;
+  border-radius : 6px;
+  background    : $accent;
+  color         : $white;
+  font-size     : 13px;
+  font-weight   : 500;
+  cursor        : pointer;
+  white-space   : nowrap;
+  flex-shrink   : 0;
+  transition    : background .14s, border-color .14s;
+
+  &:hover { background: darken($accent, 8%); }
+}
+
+// ─── Contenu principal ───────────────────────────────────────────────
+.content-area {
+  padding-top: $h;
+  min-height : 100vh;
+}
+
+// ─── Sécurité : cache tout header résiduel dans les enfants ──────────
+:host ::ng-deep {
+  .apprenant-header,
+  .app-header,
+  .topbar {
+    display: none !important;
+  }
+
+  .app-layout,
+  .page,
+  .mes-notes-container,
+  .mes-presences-container,
+  .suivi-container,
+  .catalogue-page {
+    display    : block  !important;
+    padding-top: 0      !important;
+    margin-top : 0;
+  }
+}

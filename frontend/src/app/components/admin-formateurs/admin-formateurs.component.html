@@ -11,6 +11,16 @@
       <a routerLink="/admin/formateurs" class="nav-item nav-item--active">
         <span class="nav-icon">◉</span><span>Formateurs</span>
       </a>
+      <a routerLink="/admin/formations" class="nav-item"><span class="nav-icon">◆</span><span>Formations</span></a>
+      <a routerLink="/admin/inscriptions" class="nav-item"><span class="nav-icon">◉</span><span>Inscriptions</span></a>
+      <a routerLink="/admin/planning" class="nav-item"><span class="nav-icon">📅</span><span>Planning</span></a>
+      <a routerLink="/admin/salles" class="nav-item"><span class="nav-icon">🏛</span><span>Salles</span></a>
+      <a routerLink="/admin/seances" class="nav-item"><span class="nav-icon">📋</span><span>Séances</span></a>
+      <a routerLink="/admin/tarifs" class="nav-item"><span class="nav-icon">💰</span><span>Tarifs</span></a>
+      <a routerLink="/admin/factures" class="nav-item"><span class="nav-icon">📄</span><span>Factures</span></a>
+      <a routerLink="/admin/paiements" class="nav-item"><span class="nav-icon">💳</span><span>Paiements</span></a>
+      <a routerLink="/admin/rapports" class="nav-item"><span class="nav-icon">📈</span><span>Rapports</span></a>
+      <a routerLink="/admin/statistiques" class="nav-item"><span class="nav-icon">📉</span><span>Statistiques</span></a>
     </nav>
     <div class="sidebar-user">
       <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
@@ -79,12 +89,12 @@
           <td class="td-actions">
             <ng-container *ngIf="deleteConfirmId === formateur.id; else normalActions">
               <span class="confirm-text">Confirmer ?</span>
-              <button class="btn-danger-sm" (click)="deleteFormateur(formateur.id)">Oui</button>
-              <button class="btn-ghost-sm" (click)="cancelDelete()">Non</button>
+              <button class="btn-action btn-action--danger" (click)="deleteFormateur(formateur.id)">Oui</button>
+              <button class="btn-action btn-action--ghost" (click)="cancelDelete()">Non</button>
             </ng-container>
             <ng-template #normalActions>
-              <button class="btn-icon btn-edit" (click)="openEditModal(formateur)" title="Modifier">✏</button>
-              <button class="btn-icon btn-delete" (click)="confirmDelete(formateur.id)" title="Supprimer">🗑</button>
+              <button class="btn-action btn-action--edit" (click)="openEditModal(formateur)">✏ Modifier</button>
+              <button class="btn-action btn-action--delete" (click)="confirmDelete(formateur.id)">🗑 Supprimer</button>
             </ng-template>
           </td>
         </tr>

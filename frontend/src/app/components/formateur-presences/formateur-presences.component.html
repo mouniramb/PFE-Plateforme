@@ -1,0 +1,41 @@
+<div class="action-page">
+
+  <div class="page-header">
+    <h1>✅ Présences</h1>
+    <p>Sélectionnez une séance pour enregistrer les présences</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des séances...</p>
+  </div>
+
+  <div *ngIf="!isLoading && seances.length === 0" class="empty-state">
+    <span class="empty-icon">📭</span>
+    <h3>Aucune séance disponible</h3>
+    <p>Vous n'avez pas encore de séances assignées.</p>
+  </div>
+
+  <div class="seances-list" *ngIf="!isLoading && seances.length > 0">
+    <div class="seance-card" *ngFor="let s of seances">
+      <div class="seance-info">
+        <span class="seance-titre">{{ s.titre }}</span>
+        <span class="seance-meta">
+          🎓 {{ s.formation.titre }} &nbsp;·&nbsp;
+          📅 {{ formatDate(s.dateHeureDebut) }} &nbsp;·&nbsp;
+          🕐 {{ formatHeure(s.dateHeureDebut) }} → {{ formatHeure(s.dateHeureFin) }}
+        </span>
+        <span *ngIf="s.salle" class="seance-salle">🏛 {{ s.salle.nom }}</span>
+      </div>
+      <div class="seance-right">
+        <span class="statut-badge" [ngClass]="getStatutClass(s.statut)">{{ getStatutLabel(s.statut) }}</span>
+        <button class="btn-go" (click)="goToPresences(s.id)">
+          ✅ Enregistrer présences
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

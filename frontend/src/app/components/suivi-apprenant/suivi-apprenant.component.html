@@ -1,0 +1,91 @@
+<div class="suivi-container">
+
+  <h1>📊 Mon Suivi Pédagogique</h1>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">{{ errorMessage }}</div>
+
+  <div *ngIf="!loading && suiviList.length === 0" class="empty">Aucun suivi disponible</div>
+
+  <div *ngFor="let stats of suiviList" class="suivi-card">
+    <div class="card-header">
+      <h2>{{ stats.formationTitre }}</h2>
+    </div>
+
+    <div class="stats-section">
+      <div class="stat-item">
+        <div class="stat-label">Taux de Présence</div>
+        <div [ngClass]="'stat-value ' + getTauxColor(stats.tauxPresence)">
+          {{ (stats.tauxPresence * 100).toFixed(1) }}%
+        </div>
+        <div class="stat-detail">{{ stats.seancesAssistees }}/{{ stats.totalSeances }} séances</div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-label">Moyenne Générale</div>
+        <div [ngClass]="'stat-value ' + getMoyenneColor(stats.moyenneGenerale)">
+          {{ stats.moyenneGenerale.toFixed(2) }}/20
+        </div>
+      </div>
+    </div>
+
+    <div class="presences-section">
+      <h3>Présences</h3>
+      <div *ngIf="stats.detailPresences.length > 0" class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Séance</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let presence of stats.detailPresences">
+              <td>{{ presence.seanceTitre }}</td>
+              <td>{{ presence.dateEnregistrement | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span [ngClass]="'badge ' + getPresenceColor(presence.statut)">
+                  {{ presence.statut }}
+                </span>
+              </td>
+              <td>{{ presence.commentaire || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="stats.detailPresences.length === 0" class="empty-section">Aucune présence</div>
+    </div>
+
+    <div class="notes-section">
+      <h3>Notes</h3>
+      <div *ngIf="stats.detailNotes.length > 0" class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Séance</th>
+              <th>Type</th>
+              <th>Note</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let note of stats.detailNotes">
+              <td>{{ note.seanceTitre }}</td>
+              <td>{{ note.typeEvaluation }}</td>
+              <td>
+                <span [ngClass]="'note-badge ' + getNoteColor(note.valeur)">
+                  {{ note.valeur }}/20
+                </span>
+              </td>
+              <td>{{ note.commentaire || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="stats.detailNotes.length === 0" class="empty-section">Aucune note</div>
+    </div>
+  </div>
+</div>

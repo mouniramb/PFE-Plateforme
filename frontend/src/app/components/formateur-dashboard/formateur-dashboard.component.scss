@@ -1,0 +1,210 @@
+$accent  : #2563FF;
+$ink     : #0D0F14;
+$surface : #F7F8FA;
+$border  : #E2E6EF;
+$muted   : #6B7280;
+$white   : #ffffff;
+
+// ─── Page wrapper ─────────────────────────────────────────────────────
+.dashboard-page { padding: 32px; }
+
+// ─── En-tête ──────────────────────────────────────────────────────────
+.welcome-header {
+  display         : flex;
+  justify-content : space-between;
+  align-items     : flex-start;
+  margin-bottom   : 28px;
+
+  .greeting  { color: $muted; font-size: 14px; margin: 0 0 4px; }
+  h1         { font-size: 26px; font-weight: 800; color: $ink; margin: 0 0 4px; }
+  .subtitle  { color: $muted; font-size: 14px; margin: 0; }
+}
+
+.role-badge {
+  padding       : 8px 18px;
+  background    : #EFF6FF;
+  border        : 1.5px solid #BFDBFE;
+  border-radius : 24px;
+  font-size     : 13px;
+  font-weight   : 700;
+  color         : #1D4ED8;
+  white-space   : nowrap;
+}
+
+// ─── Alerte ───────────────────────────────────────────────────────────
+.alert-error {
+  display         : flex;
+  justify-content : space-between;
+  align-items     : center;
+  padding         : 12px 16px;
+  background      : #FEE2E2;
+  border          : 1px solid #FECACA;
+  border-radius   : 8px;
+  color           : #991B1B;
+  font-size       : 14px;
+  margin-bottom   : 20px;
+
+  button { background: none; border: none; cursor: pointer; color: inherit; font-size: 16px; }
+}
+
+// ─── Stats ────────────────────────────────────────────────────────────
+.stats-grid {
+  display               : grid;
+  grid-template-columns : repeat(3, 1fr);
+  gap                   : 16px;
+  margin-bottom         : 32px;
+}
+
+.stat-card {
+  background    : $white;
+  border        : 1px solid $border;
+  border-radius : 12px;
+  padding       : 20px;
+  display       : flex;
+  align-items   : center;
+  gap           : 16px;
+  box-shadow    : 0 1px 3px rgba(0,0,0,.05);
+  border-top    : 4px solid transparent;
+
+  &.stat-card--blue   { border-top-color: #2563FF; }
+  &.stat-card--purple { border-top-color: #7C3AFF; }
+  &.stat-card--green  { border-top-color: #10B981; }
+
+  .stat-icon  { font-size: 32px; }
+  .stat-info  { display: flex; flex-direction: column; }
+  .stat-value { font-size: 28px; font-weight: 800; color: $ink; }
+  .stat-label { font-size: 12px; color: $muted; font-weight: 500; }
+}
+
+// ─── Loading ──────────────────────────────────────────────────────────
+.loading-state {
+  text-align: center;
+  padding   : 48px;
+  color     : $muted;
+
+  .spinner {
+    width            : 36px;
+    height           : 36px;
+    border           : 3px solid $border;
+    border-top-color : $accent;
+    border-radius    : 50%;
+    animation        : spin .8s linear infinite;
+    margin           : 0 auto 16px;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Section ──────────────────────────────────────────────────────────
+.section { margin-bottom: 32px; }
+
+.section-title {
+  font-size     : 18px;
+  font-weight   : 700;
+  color         : $ink;
+  margin        : 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom : 2px solid $border;
+}
+
+// ─── Tableau séances ──────────────────────────────────────────────────
+.seances-table-wrapper {
+  background    : $white;
+  border        : 1px solid $border;
+  border-radius : 12px;
+  overflow      : auto;
+  box-shadow    : 0 1px 3px rgba(0,0,0,.04);
+}
+
+.seances-table {
+  width           : 100%;
+  border-collapse : collapse;
+
+  th {
+    background     : #F9FAFB;
+    padding        : 11px 14px;
+    font-size      : 12px;
+    font-weight    : 600;
+    color          : $muted;
+    text-align     : left;
+    text-transform : uppercase;
+    letter-spacing : .3px;
+    border-bottom  : 1px solid $border;
+    white-space    : nowrap;
+  }
+
+  td {
+    padding        : 13px 14px;
+    font-size      : 13.5px;
+    color          : $ink;
+    border-bottom  : 1px solid #F3F4F6;
+    vertical-align : middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td      { background: #F9FAFB; }
+}
+
+.td-titre {
+  .titre-text { display: block; font-weight: 600; }
+  .desc-text  { display: block; font-size: 12px; color: $muted; margin-top: 2px; }
+}
+
+.td-formation { max-width: 160px; }
+.td-date      { white-space: nowrap; font-size: 13px; }
+.td-horaire   { white-space: nowrap; font-size: 13px; color: $muted; }
+.td-duree     { text-align: center; font-size: 13px; color: $muted; }
+.text-muted   { color: $muted; }
+
+// ─── Badges statut ────────────────────────────────────────────────────
+.statut-badge {
+  padding       : 4px 10px;
+  border-radius : 20px;
+  font-size     : 12px;
+  font-weight   : 600;
+  white-space   : nowrap;
+
+  &.statut-planifiee { background: #DBEAFE; color: #1E40AF; }
+  &.statut-en-cours  { background: #D1FAE5; color: #065F46; }
+  &.statut-terminee  { background: #F3F4F6; color: #4B5563; }
+  &.statut-annulee   { background: #FEE2E2; color: #991B1B; }
+}
+
+// ─── Boutons actions ──────────────────────────────────────────────────
+.td-actions {
+  display  : flex;
+  gap      : 6px;
+  flex-wrap: wrap;
+  min-width: 220px;
+}
+
+.btn-action {
+  padding       : 5px 10px;
+  border        : none;
+  border-radius : 6px;
+  font-size     : 12px;
+  font-weight   : 600;
+  cursor        : pointer;
+  white-space   : nowrap;
+  transition    : opacity .15s, transform .1s;
+
+  &:hover  { opacity: .85; transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+
+  &.btn-presences { background: #D1FAE5; color: #065F46; }
+  &.btn-notes     { background: #EDE9FE; color: #5B21B6; }
+  &.btn-suivi     { background: #DBEAFE; color: #1E40AF; }
+}
+
+// ─── État vide ────────────────────────────────────────────────────────
+.empty-state {
+  background    : $white;
+  border        : 1px solid $border;
+  border-radius : 12px;
+  padding       : 48px;
+  text-align    : center;
+
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  h3          { font-size: 18px; font-weight: 700; color: $ink; margin: 0 0 8px; }
+  p           { color: $muted; margin: 0; }
+}

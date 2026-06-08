@@ -22,6 +22,14 @@
         <span class="nav-icon">▣</span>
         <span>Formateurs</span>
       </a>
+      <a routerLink="/admin/planning" class="nav-item"><span class="nav-icon">📅</span><span>Planning</span></a>
+      <a routerLink="/admin/salles" class="nav-item"><span class="nav-icon">🏛</span><span>Salles</span></a>
+      <a routerLink="/admin/seances" class="nav-item"><span class="nav-icon">📋</span><span>Séances</span></a>
+      <a routerLink="/admin/tarifs" class="nav-item"><span class="nav-icon">💰</span><span>Tarifs</span></a>
+      <a routerLink="/admin/factures" class="nav-item"><span class="nav-icon">📄</span><span>Factures</span></a>
+      <a routerLink="/admin/paiements" class="nav-item"><span class="nav-icon">💳</span><span>Paiements</span></a>
+      <a routerLink="/admin/rapports" class="nav-item"><span class="nav-icon">📈</span><span>Rapports</span></a>
+      <a routerLink="/admin/statistiques" class="nav-item"><span class="nav-icon">📉</span><span>Statistiques</span></a>
     </nav>
 
     <div class="sidebar-user">
@@ -106,7 +114,7 @@
               </div>
             </td>
 
-            <td>{{ formation.prix | currency:'EUR':'symbol':'1.0-0' }}</td>
+            <td>{{ formation.prix | number:'1.0-0' }} DT</td>
 
             <td>
               <span [class]="getStatutClass(formation.statut)">{{ getStatutLabel(formation.statut) }}</span>
@@ -115,14 +123,14 @@
             <td class="actions">
               <ng-container *ngIf="deleteConfirmId === formation.id; else normalActions">
                 <span class="confirm-text">Confirmer ?</span>
-                <button class="btn-danger-sm" (click)="deleteFormation(formation.id)">Oui</button>
-                <button class="btn-ghost-sm" (click)="cancelDelete()">Non</button>
+                <button class="btn-action btn-action--danger" (click)="deleteFormation(formation.id)">Oui</button>
+                <button class="btn-action btn-action--ghost" (click)="cancelDelete()">Non</button>
               </ng-container>
 
               <ng-template #normalActions>
-                <button class="btn-icon" title="Modifier" (click)="editFormation(formation.id)">✏</button>
-                <button class="btn-icon" title="Voir inscrits" (click)="viewInscrits(formation.id)">👥</button>
-                <button class="btn-icon btn-icon--danger" title="Supprimer" (click)="confirmDelete(formation.id)">🗑</button>
+                <button class="btn-action btn-action--edit" (click)="editFormation(formation.id)">✏ Modifier</button>
+                <button class="btn-action btn-action--view" (click)="viewInscrits(formation.id)">👥 Inscrits</button>
+                <button class="btn-action btn-action--delete" (click)="confirmDelete(formation.id)">🗑 Supprimer</button>
               </ng-template>
             </td>
           </tr>

@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>Rapports</h1>
+      <p class="subtitle">Générez et consultez les rapports d'activité</p>
+    </div>
+  </div>
+
+  <div class="alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error-msg" *ngIf="error">{{ error }}</div>
+  <div class="loading-msg" *ngIf="loading">Génération en cours...</div>
+
+  <!-- Boutons de génération rapide -->
+  <div class="quick-actions">
+    <button class="action-btn" (click)="generateRapportApprenants()">📊 Rapport Apprenants</button>
+    <button class="action-btn" (click)="generateRapportFormations()">📚 Rapport Formations</button>
+    <button class="action-btn" (click)="generateRapportPaiements()">💰 Rapport Paiements</button>
+  </div>
+
+  <!-- Rapport personnalisé avec dates -->
+  <div class="filters">
+    <input type="date" class="date-input" [(ngModel)]="dateDebut">
+    <input type="date" class="date-input" [(ngModel)]="dateFin">
+    <button class="btn-primary" (click)="generateRapport()">Générer Rapport</button>
+  </div>
+
+  <!-- Filtres par type -->
+  <div class="filter-bar">
+    <span class="filter-label">Filtrer :</span>
+    <button class="filter-btn" [class.filter-btn--active]="selectedType === ''" (click)="resetFilter()">
+      Tous
+    </button>
+    <button class="filter-btn" [class.filter-btn--active]="selectedType === 'APPRENANTS'" (click)="filterByType('APPRENANTS')">
+      Apprenants
+    </button>
+    <button class="filter-btn" [class.filter-btn--active]="selectedType === 'FORMATIONS'" (click)="filterByType('FORMATIONS')">
+      Formations
+    </button>
+    <button class="filter-btn" [class.filter-btn--active]="selectedType === 'PAIEMENTS'" (click)="filterByType('PAIEMENTS')">
+      Paiements
+    </button>
+    <button class="filter-btn" [class.filter-btn--active]="selectedType === 'PDF'" (click)="filterByType('PDF')">
+      Document
+    </button>
+  </div>
+
+  <!-- Tableau des rapports -->
+  <h2 class="section-title">
+    Rapports Générés
+    <span class="count-badge" *ngIf="rapports.length > 0">{{ rapports.length }}</span>
+  </h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nom du rapport</th>
+        <th>Type</th>
+        <th>Date de génération</th>
+        <th>Taille</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rapport of rapports">
+        <td>{{ rapport.nom }}</td>
+        <td>
+          <span class="type-badge" [ngClass]="getTypeBadgeClass(rapport.type)">
+            {{ getTypeLabel(rapport.type) }}
+          </span>
+        </td>
+        <td>{{ rapport.dateGeneration | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ rapport.taille }}</td>
+        <td>
+          <button class="btn-download" (click)="downloadRapport(rapport.id)">Télécharger</button>
+          <button class="btn-delete" (click)="deleteRapport(rapport.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && rapports.length === 0" class="empty-msg">
+    {{ selectedType ? 'Aucun rapport de type "' + getTypeLabel(selectedType) + '"' : 'Aucun rapport généré' }}
+  </div>
+</div>

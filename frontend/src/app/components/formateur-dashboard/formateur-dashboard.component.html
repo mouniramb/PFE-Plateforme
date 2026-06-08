@@ -1,0 +1,109 @@
+<div class="dashboard-page">
+
+  <!-- En-tête -->
+  <div class="welcome-header">
+    <div class="welcome-text">
+      <p class="greeting">Bonjour,</p>
+      <h1>{{ currentUser?.prenom }} {{ currentUser?.nom }} 👋</h1>
+      <p class="subtitle">Voici vos séances et activités du moment.</p>
+    </div>
+    <span class="role-badge">👨‍🏫 FORMATEUR</span>
+  </div>
+
+  <!-- Alerte erreur -->
+  <div *ngIf="errorMessage" class="alert-error">
+    <span>⚠ {{ errorMessage }}</span>
+    <button (click)="errorMessage = ''">✕</button>
+  </div>
+
+  <!-- ── Cartes statistiques ── -->
+  <div class="stats-grid">
+
+    <div class="stat-card stat-card--blue">
+      <div class="stat-icon">📋</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ isLoading ? '—' : nbSeances }}</span>
+        <span class="stat-label">Séances assignées</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--purple">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ isLoading ? '—' : nbFormations }}</span>
+        <span class="stat-label">Formations</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ isLoading ? '—' : nbSeancesTerminees }}</span>
+        <span class="stat-label">Séances terminées</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Spinner ── -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des séances...</p>
+  </div>
+
+  <!-- ── Liste des séances ── -->
+  <ng-container *ngIf="!isLoading">
+
+    <section class="section">
+      <h2 class="section-title">📋 Mes séances</h2>
+
+      <div *ngIf="seances.length === 0" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>Vous n'avez pas de séances</h3>
+        <p>Aucune séance ne vous est assignée pour le moment.</p>
+      </div>
+
+      <div *ngIf="seances.length > 0" class="seances-table-wrapper">
+        <table class="seances-table">
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Formation</th>
+              <th>Salle</th>
+              <th>Date</th>
+              <th>Horaire</th>
+              <th>Durée</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of seances">
+              <td class="td-titre">
+                <span class="titre-text">{{ s.titre }}</span>
+                <span class="desc-text" *ngIf="s.description">{{ s.description }}</span>
+              </td>
+              <td class="td-formation">{{ s.formation.titre }}</td>
+              <td class="td-salle">
+                <span *ngIf="s.salle">🏛 {{ s.salle.nom }}</span>
+                <span *ngIf="!s.salle" class="text-muted">—</span>
+              </td>
+              <td class="td-date">{{ formatDate(s.dateHeureDebut) }}</td>
+              <td class="td-horaire">
+                {{ formatHeure(s.dateHeureDebut) }} → {{ formatHeure(s.dateHeureFin) }}
+              </td>
+              <td class="td-duree">{{ s.dureeMinutes }} min</td>
+              <td class="td-statut">
+                <span class="statut-badge" [ngClass]="getStatutClass(s.statut)">
+                  {{ getStatutLabel(s.statut) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </ng-container>
+
+</div>

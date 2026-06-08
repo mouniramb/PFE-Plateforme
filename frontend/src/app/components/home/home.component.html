@@ -1,0 +1,109 @@
+<div class="home-page">
+
+  <!-- ── Topbar ── -->
+  <header class="topbar">
+    <a routerLink="/" class="brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-text">FormaPro</span>
+    </a>
+
+    <nav class="topbar-nav">
+      <a routerLink="/catalogue" class="nav-link">Catalogue</a>
+    </nav>
+
+    <div class="topbar-actions">
+      <ng-container *ngIf="authService.isLoggedIn(); else guestButtons">
+        <span class="welcome-text">Bonjour, {{ authService.getCurrentUser()?.prenom || authService.getCurrentUser()?.email }}</span>
+        <button class="btn-primary" (click)="goToDashboard()">Mon espace</button>
+        <button class="btn-outline" (click)="logout()">Déconnexion</button>
+      </ng-container>
+      <ng-template #guestButtons>
+        <a routerLink="/login" class="btn-outline">Connexion</a>
+        <a routerLink="/register" class="btn-primary">S'inscrire</a>
+      </ng-template>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-badge">Plateforme de formation professionnelle</span>
+      <h1 class="hero-title">
+        Développez vos<br>
+        <span class="gradient-text">compétences numériques</span>
+      </h1>
+      <p class="hero-subtitle">
+        Accédez à des formations animées par des experts, suivez votre progression
+        et obtenez des certifications reconnues.
+      </p>
+      <div class="hero-cta">
+        <a routerLink="/catalogue" class="btn-hero-primary">Voir le catalogue</a>
+        <a *ngIf="!authService.isLoggedIn()" routerLink="/register" class="btn-hero-secondary">
+          Commencer gratuitement
+        </a>
+        <button *ngIf="authService.isLoggedIn()" class="btn-hero-secondary" (click)="goToDashboard()">
+          Accéder à mon espace
+        </button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="visual-card card-1">
+        <span class="card-icon">🎓</span>
+        <div>
+          <div class="card-label">Formations</div>
+          <div class="card-value">100+</div>
+        </div>
+      </div>
+      <div class="visual-card card-2">
+        <span class="card-icon">👨‍🏫</span>
+        <div>
+          <div class="card-label">Formateurs</div>
+          <div class="card-value">Experts</div>
+        </div>
+      </div>
+      <div class="visual-card card-3">
+        <span class="card-icon">✅</span>
+        <div>
+          <div class="card-label">Certifiés</div>
+          <div class="card-value">500+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ── -->
+  <section class="features">
+    <h2 class="section-title">Pourquoi choisir FormaPro ?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>Catalogue complet</h3>
+        <p>Des formations couvrant les dernières technologies et méthodologies du numérique.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Suivi personnalisé</h3>
+        <p>Tableau de bord pour suivre vos présences, notes et progression en temps réel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗓️</div>
+        <h3>Planning flexible</h3>
+        <p>Consultez votre calendrier de séances et gérez vos inscriptions facilement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Certification reconnue</h3>
+        <p>Obtenez des attestations officielles à l'issue de chaque formation réussie.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <span class="brand-icon">⬡</span>
+    <span class="brand-text">FormaPro</span>
+    <span class="footer-sep">·</span>
+    <span class="footer-copy">Plateforme de formation professionnelle</span>
+  </footer>
+
+</div>

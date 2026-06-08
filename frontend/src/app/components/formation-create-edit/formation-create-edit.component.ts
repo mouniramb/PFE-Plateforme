@@ -72,7 +72,7 @@ export class FormationCreateEditComponent implements OnInit {
         dateDebut: ['', [Validators.required]],
         dateFin: ['', [Validators.required]],
         capaciteMax: [1, [Validators.required, Validators.min(1)]],
-        prix: [0, [Validators.required, Validators.min(0)]],
+        prix: [0, [Validators.required, Validators.min(0), Validators.max(800)]],
         statut: ['PLANIFIEE', [Validators.required]]
       },
       { validators: [dateValidator] }

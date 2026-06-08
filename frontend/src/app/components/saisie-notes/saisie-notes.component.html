@@ -1,0 +1,72 @@
+<div class="saisie-container">
+  <div class="saisie-header">
+    <button class="btn-back" (click)="goBack()">← Retour</button>
+    <h1>Saisir les Notes</h1>
+  </div>
+
+  <div *ngIf="seance" class="seance-info">
+    <div class="info-item"><strong>Séance :</strong> {{ seance.titre }}</div>
+    <div class="info-item"><strong>Formation :</strong> {{ seance.formation.titre }}</div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-error">{{ errorMessage }}</div>
+
+  <div class="evaluation-section">
+    <div class="eval-group">
+      <label>Type d'évaluation *</label>
+      <div class="eval-tabs">
+        <button *ngFor="let type of typeOptions"
+          [class.active]="typeEvaluation === type"
+          (click)="setType(type)"
+          class="eval-tab">
+          {{ type }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notes-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Apprenant</th>
+          <th>Note /20</th>
+          <th>Commentaire</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let apprenant of apprenants">
+          <td class="apprenant-name">{{ apprenant.nom }} {{ apprenant.prenom }}</td>
+          <td class="note-input">
+            <input type="number" 
+              [(ngModel)]="apprenant.note" 
+              step="0.5" 
+              min="0" 
+              max="20"
+              [ngClass]="getNoteColor(apprenant.note)"
+              class="input-note" />
+          </td>
+          <td class="commentaire">
+            <input type="text" 
+              [(ngModel)]="apprenant.commentaire" 
+              placeholder="Optionnel"
+              class="input-commentaire" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="moyenne-section">
+    <strong>Moyenne de classe : </strong>
+    <span [ngClass]="getMoyenne() >= 10 ? 'moyenne-vert' : (getMoyenne() >= 7 ? 'moyenne-orange' : 'moyenne-rouge')">
+      {{ getMoyenne().toFixed(2) }}/20
+    </span>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" (click)="enregistrerNotes()">Enregistrer les notes</button>
+  </div>
+</div>

@@ -71,6 +71,21 @@ export class InscriptionService {
       .pipe(map(response => this.normalizePage(response)));
   }
 
+  // Retourne les formations d'un apprenant (ACCEPTEE seulement)
+  getFormationsApprenant(apprenantId: number): Observable<Inscription[]> {
+    const params = new HttpParams().set('page', 0).set('size', 100);
+    return this.http
+      .get<PageResponse<Inscription> | Inscription[]>(
+        `${this.API_URL}/apprenant/${apprenantId}`, { params }
+      )
+      .pipe(
+        map(response => {
+          const all = this.extractInscriptionArray(response);
+          return all.filter(i => i.statut === 'ACCEPTEE');
+        })
+      );
+  }
+
   getInscritsAcceptes(formationId: number): Observable<Inscription[]> {
     return this.http
       .get<PageResponse<Inscription> | Inscription[]>(`${this.API_URL}/formation/${formationId}/acceptes`)

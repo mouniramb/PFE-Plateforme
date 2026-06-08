@@ -1,20 +1,4 @@
 <div class="catalogue-page">
-  <header class="topbar">
-    <a routerLink="/catalogue" class="brand">
-      <span class="brand-icon">⬡</span>
-      <span class="brand-text">FormaPro</span>
-    </a>
-
-    <nav class="topbar-nav">
-      <a routerLink="/catalogue" class="nav-link nav-link--active">Catalogue</a>
-      <a *ngIf="isApprenant()" routerLink="/mes-inscriptions" class="nav-link">Mes inscriptions</a>
-      <a *ngIf="isAdmin()" routerLink="/admin/dashboard" class="nav-link">Admin</a>
-      <a *ngIf="isFormateur()" routerLink="/formateur/dashboard" class="nav-link">Formateur</a>
-    </nav>
-
-    <button *ngIf="isLoggedIn()" class="btn-logout" (click)="logout()">Déconnexion</button>
-    <button *ngIf="!isLoggedIn()" class="btn-login" (click)="goToLogin()">Connexion</button>
-  </header>
 
   <section class="hero">
     <h1>Formez-vous aux métiers du numérique</h1>
@@ -58,7 +42,7 @@
       <div class="meta-row">👤 {{ getPrimaryFormateur(formation) }}</div>
 
       <div class="card-footer">
-        <div class="price">{{ formation.prix | currency:'EUR':'symbol':'1.0-0' }}</div>
+        <div class="price">{{ formation.prix | number:'1.0-0' }} DT</div>
         <div class="actions">
           <a class="btn-detail" [routerLink]="['/formations', formation.id]">Détails</a>
 

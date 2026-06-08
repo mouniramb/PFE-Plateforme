@@ -1,0 +1,368 @@
+<div class="admin-layout">
+
+  <!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard"     class="nav-item"><span class="nav-icon">◈</span><span>Tableau de bord</span></a>
+      <a routerLink="/admin/formations"    class="nav-item"><span class="nav-icon">◆</span><span>Formations</span></a>
+      <a routerLink="/admin/inscriptions"  class="nav-item"><span class="nav-icon">◉</span><span>Inscriptions</span></a>
+      <a routerLink="/admin/formateurs"    class="nav-item"><span class="nav-icon">▣</span><span>Formateurs</span></a>
+      <a routerLink="/admin/planning"      class="nav-item"><span class="nav-icon">📅</span><span>Planning</span></a>
+      <a routerLink="/admin/salles"        class="nav-item"><span class="nav-icon">🏛</span><span>Salles</span></a>
+      <a routerLink="/admin/seances"       class="nav-item"><span class="nav-icon">📋</span><span>Séances</span></a>
+      <a routerLink="/admin/paiements"     class="nav-item nav-item--active"><span class="nav-icon">💳</span><span>Paiements</span></a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Administrateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()">⏻</button>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+  <main class="main-content">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Gestion des Paiements</h1>
+        <p class="page-subtitle">Validez, rejetez et suivez les paiements des apprenants</p>
+      </div>
+      <button class="btn-primary" (click)="enregistrerPaiement()">
+        <span class="btn-icon">+</span> Enregistrer un paiement
+      </button>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert alert--success" *ngIf="successMessage">
+      <span class="alert-icon">✓</span>
+      <span>{{ successMessage }}</span>
+      <button class="alert-close" (click)="successMessage=''">×</button>
+    </div>
+    <div class="alert alert--error" *ngIf="errorMessage && !showValidModal && !showRejectModal">
+      <span class="alert-icon">!</span>
+      <span>{{ errorMessage }}</span>
+      <button class="alert-close" (click)="errorMessage=''">×</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <div class="tabs">
+        <button
+          *ngFor="let tab of tabs"
+          class="tab-btn"
+          [class.tab-btn--active]="activeTab === tab.key"
+          (click)="setTab(tab.key)">
+          {{ tab.label }}
+          <span class="tab-count" *ngIf="activeTab === tab.key && totalItems > 0">{{ totalItems }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <span>Chargement des paiements...</span>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container" *ngIf="!isLoading">
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="filteredPaiements.length === 0">
+        <div class="empty-icon">💳</div>
+        <h3>Aucun paiement
+          <ng-container *ngIf="activeTab === 'EN_ATTENTE'">en attente</ng-container>
+          <ng-container *ngIf="activeTab === 'VALIDE'">validé</ng-container>
+          <ng-container *ngIf="activeTab === 'REJETE'">rejeté</ng-container>
+        </h3>
+        <p *ngIf="activeTab === 'EN_ATTENTE'">Tous les paiements ont été traités.</p>
+        <p *ngIf="activeTab !== 'EN_ATTENTE'">Aucun paiement avec ce statut pour le moment.</p>
+      </div>
+
+      <table *ngIf="filteredPaiements.length > 0">
+        <thead>
+          <tr>
+            <th>Apprenant</th>
+            <th>Formation</th>
+            <th>Mode</th>
+            <th>Montant</th>
+            <th>Remise</th>
+            <th>Net</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let paiement of filteredPaiements">
+
+            <!-- Apprenant -->
+            <td>
+              <span class="apprenant-name">
+                {{ paiement.apprenantPrenom }} {{ paiement.apprenantNom }}
+              </span>
+            </td>
+
+            <!-- Formation -->
+            <td>
+              <span class="formation-title">{{ paiement.formationTitre }}</span>
+            </td>
+
+            <!-- Mode badge -->
+            <td>
+              <span class="badge-mode" [ngClass]="getModeBadgeClass(paiement.modePaiement)">
+                {{ getModeLabel(paiement.modePaiement) }}
+              </span>
+              <span class="mode-detail" *ngIf="paiement.modePaiement === 'TRANCHE' && paiement.trancheNumber">
+                T{{ paiement.trancheNumber }}/9
+              </span>
+              <span class="mode-detail" *ngIf="paiement.modePaiement === 'ANNUAIRE' && paiement.moisAnnuaire">
+                M{{ paiement.moisAnnuaire }}/12
+              </span>
+            </td>
+
+            <!-- Montant -->
+            <td>
+              <span class="montant">{{ paiement.montant | number:'1.2-2' }} DT</span>
+            </td>
+
+            <!-- Remise -->
+            <td>
+              <span *ngIf="paiement.remise > 0" class="remise">-{{ paiement.remise | number:'1.2-2' }} DT</span>
+              <span *ngIf="!paiement.remise || paiement.remise === 0" class="muted-dash">—</span>
+            </td>
+
+            <!-- Montant Net -->
+            <td>
+              <span class="montant-net">{{ paiement.montantNet | number:'1.2-2' }} DT</span>
+            </td>
+
+            <!-- Date -->
+            <td>
+              <span class="date-cell">{{ paiement.datePaiement | date:'dd/MM/yyyy' }}</span>
+            </td>
+
+            <!-- Statut badge -->
+            <td>
+              <span class="badge-statut" [ngClass]="getStatutBadgeClass(paiement.statut)">
+                {{ getStatutLabel(paiement.statut) }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="actions-cell">
+              <ng-container *ngIf="paiement.statut === 'EN_ATTENTE'">
+                <button class="btn-validate" (click)="openValiderModal(paiement)" title="Valider ce paiement">
+                  ✓ Valider
+                </button>
+                <button class="btn-reject" (click)="openRejeterModal(paiement)" title="Rejeter ce paiement">
+                  ✕ Rejeter
+                </button>
+              </ng-container>
+              <ng-container *ngIf="paiement.statut === 'VALIDE'">
+                <span class="action-done action-done--valid">Validé</span>
+              </ng-container>
+              <ng-container *ngIf="paiement.statut === 'REJETE'">
+                <span class="action-done action-done--reject">Rejeté</span>
+              </ng-container>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button class="page-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 0">‹</button>
+        <button
+          *ngFor="let page of getPages()"
+          class="page-btn"
+          [class.page-btn--active]="page === currentPage"
+          (click)="changePage(page)">
+          {{ page + 1 }}
+        </button>
+        <button class="page-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages - 1">›</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════ MODAL ENREGISTRER PAIEMENT ═══════════════ -->
+<div class="modal-overlay" *ngIf="showPaiementModal" (click)="onPaiementClosed()">
+  <div class="modal modal--form" (click)="$event.stopPropagation()">
+    <app-enregistrer-paiement
+      [embedded]="true"
+      (saved)="onPaiementSaved()"
+      (closed)="onPaiementClosed()">
+    </app-enregistrer-paiement>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL VALIDER ═══════════════════════════ -->
+<div class="modal-overlay" *ngIf="showValidModal" (click)="closeModals()">
+  <div class="modal modal--confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header modal-header--success">
+      <div class="modal-header-icon">✓</div>
+      <h2 class="modal-title">Confirmer la validation</h2>
+      <button class="modal-close" (click)="closeModals()">×</button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedPaiement">
+      <div class="alert alert--error" *ngIf="errorMessage">
+        <span>{{ errorMessage }}</span>
+        <button class="alert-close" (click)="errorMessage=''">×</button>
+      </div>
+
+      <p class="confirm-text">
+        Vous êtes sur le point de <strong>valider</strong> le paiement suivant :
+      </p>
+
+      <div class="detail-card">
+        <div class="detail-row">
+          <span class="detail-label">Apprenant</span>
+          <span class="detail-value">{{ selectedPaiement.apprenantPrenom }} {{ selectedPaiement.apprenantNom }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Formation</span>
+          <span class="detail-value">{{ selectedPaiement.formationTitre }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Mode de paiement</span>
+          <span class="badge-mode" [ngClass]="getModeBadgeClass(selectedPaiement.modePaiement)">
+            {{ getModeLabel(selectedPaiement.modePaiement) }}
+          </span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPaiement.modePaiement === 'TRANCHE' && selectedPaiement.trancheNumber">
+          <span class="detail-label">Numéro de tranche</span>
+          <span class="detail-value">{{ selectedPaiement.trancheNumber }} / 9</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPaiement.modePaiement === 'ANNUAIRE' && selectedPaiement.moisAnnuaire">
+          <span class="detail-label">Mois</span>
+          <span class="detail-value">{{ selectedPaiement.moisAnnuaire }} / 12</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Montant</span>
+          <span class="detail-value">{{ selectedPaiement.montant | number:'1.2-2' }} DT</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPaiement.remise > 0">
+          <span class="detail-label">Remise</span>
+          <span class="detail-value">-{{ selectedPaiement.remise | number:'1.2-2' }} DT</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Montant net</span>
+          <span class="detail-value detail-value--strong">{{ selectedPaiement.montantNet | number:'1.2-2' }} DT</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Date</span>
+          <span class="detail-value">{{ selectedPaiement.datePaiement | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPaiement.notes">
+          <span class="detail-label">Notes</span>
+          <span class="detail-value">{{ selectedPaiement.notes }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPaiement.commentaire">
+          <span class="detail-label">Commentaire</span>
+          <span class="detail-value">{{ selectedPaiement.commentaire }}</span>
+        </div>
+      </div>
+
+      <p class="confirm-warning">Cette action va marquer le paiement comme <strong>VALIDÉ</strong>.</p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeModals()" [disabled]="isSubmitting">Annuler</button>
+      <button type="button" class="btn-confirm-valid" (click)="validerPaiement()" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Validation...' : '✓ Confirmer la validation' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL REJETER ═══════════════════════════ -->
+<div class="modal-overlay" *ngIf="showRejectModal" (click)="closeModals()">
+  <div class="modal modal--confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header modal-header--error">
+      <div class="modal-header-icon modal-header-icon--error">✕</div>
+      <h2 class="modal-title">Rejeter le paiement</h2>
+      <button class="modal-close" (click)="closeModals()">×</button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedPaiement">
+      <div class="alert alert--error" *ngIf="errorMessage">
+        <span>{{ errorMessage }}</span>
+        <button class="alert-close" (click)="errorMessage=''">×</button>
+      </div>
+
+      <p class="confirm-text">
+        Vous êtes sur le point de <strong>rejeter</strong> le paiement suivant :
+      </p>
+
+      <div class="detail-card detail-card--error">
+        <div class="detail-row">
+          <span class="detail-label">Apprenant</span>
+          <span class="detail-value">{{ selectedPaiement.apprenantPrenom }} {{ selectedPaiement.apprenantNom }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Formation</span>
+          <span class="detail-value">{{ selectedPaiement.formationTitre }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Mode</span>
+          <span class="badge-mode" [ngClass]="getModeBadgeClass(selectedPaiement.modePaiement)">
+            {{ getModeLabel(selectedPaiement.modePaiement) }}
+          </span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPaiement.modePaiement === 'TRANCHE' && selectedPaiement.trancheNumber">
+          <span class="detail-label">Numéro de tranche</span>
+          <span class="detail-value">{{ selectedPaiement.trancheNumber }} / 9</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPaiement.modePaiement === 'ANNUAIRE' && selectedPaiement.moisAnnuaire">
+          <span class="detail-label">Mois</span>
+          <span class="detail-value">{{ selectedPaiement.moisAnnuaire }} / 12</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Montant net</span>
+          <span class="detail-value detail-value--strong">{{ selectedPaiement.montantNet | number:'1.2-2' }} DT</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Date</span>
+          <span class="detail-value">{{ selectedPaiement.datePaiement | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+
+      <!-- Raison du rejet -->
+      <div class="form-group">
+        <label class="form-label">
+          Raison du rejet <span class="required">*</span>
+        </label>
+        <textarea
+          class="form-control form-textarea"
+          [(ngModel)]="rejectRaison"
+          placeholder="Expliquez la raison du rejet (ex: montant incorrect, doublon...)"
+          rows="3">
+        </textarea>
+        <span class="field-hint">Cette raison sera enregistrée dans le système.</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeModals()" [disabled]="isSubmitting">Annuler</button>
+      <button
+        type="button"
+        class="btn-confirm-reject"
+        (click)="rejeterPaiement()"
+        [disabled]="isSubmitting || !rejectRaison.trim()">
+        {{ isSubmitting ? 'Rejet...' : '✕ Confirmer le rejet' }}
+      </button>
+    </div>
+  </div>
+</div>

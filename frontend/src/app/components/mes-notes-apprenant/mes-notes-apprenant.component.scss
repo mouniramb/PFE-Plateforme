@@ -1,0 +1,236 @@
+// Colors
+$ink: #0D0F14;
+$accent: #2563FF;
+$surface: #F7F8FA;
+$border: #E2E6EF;
+$muted: #6B7280;
+
+$green: #085041;
+$green-light: #E1F5EE;
+$orange: #633806;
+$orange-light: #FAEEDA;
+$red: #791F1F;
+$red-light: #FCEBEB;
+
+.apprenant-header {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 0.9rem;
+  margin-bottom: 24px;
+
+  .brand {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: $ink;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+
+    .nav-link {
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: $muted;
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
+      white-space: nowrap;
+      transition: all 0.15s;
+
+      &:hover { color: $ink; background: $surface; }
+      &.nav-link--active { color: $accent; background: rgba(37, 99, 255, 0.08); font-weight: 600; }
+    }
+  }
+}
+
+.mes-notes-container {
+  padding: 20px;
+  background: $surface;
+  min-height: 100vh;
+
+  h1 {
+    color: $ink;
+    font-size: 28px;
+    margin: 0 0 20px 0;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: $muted;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 40px;
+    color: $muted;
+    background: white;
+    border-radius: 8px;
+  }
+
+  .formation-accordion {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    overflow: hidden;
+
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 1px solid $border;
+
+      &:hover {
+        background: $surface;
+      }
+
+      .arrow {
+        display: inline-block;
+        transition: transform 0.2s;
+        color: $accent;
+        font-size: 12px;
+        font-weight: 600;
+
+        &.expanded {
+          transform: rotate(90deg);
+        }
+      }
+
+      h3 {
+        margin: 0;
+        flex: 1;
+        color: $ink;
+        font-size: 16px;
+      }
+
+      .moyenne-badge {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+
+        &.moyenne-vert {
+          background: $green-light;
+          color: $green;
+        }
+
+        &.moyenne-orange {
+          background: $orange-light;
+          color: $orange;
+        }
+
+        &.moyenne-rouge {
+          background: $red-light;
+          color: $red;
+        }
+      }
+    }
+
+    .accordion-content {
+      overflow-x: auto;
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+
+        thead {
+          background: $surface;
+          border-bottom: 1px solid $border;
+
+          th {
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: $ink;
+          }
+        }
+
+        tbody {
+          tr {
+            border-bottom: 1px solid $border;
+
+            &:hover {
+              background: rgba($accent, 0.02);
+            }
+
+            td {
+              padding: 8px 12px;
+              color: $ink;
+
+              .badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 11px;
+                font-weight: 600;
+
+                &.note-vert {
+                  background: $green-light;
+                  color: $green;
+                }
+
+                &.note-orange {
+                  background: $orange-light;
+                  color: $orange;
+                }
+
+                &.note-rouge {
+                  background: $red-light;
+                  color: $red;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .mes-notes-container {
+    padding: 12px;
+
+    h1 {
+      font-size: 20px;
+    }
+
+    .formation-accordion {
+      .accordion-header {
+        flex-direction: column;
+        align-items: flex-start;
+
+        h3 {
+          width: 100%;
+        }
+
+        .moyenne-badge {
+          align-self: flex-start;
+        }
+      }
+
+      .accordion-content table {
+        font-size: 12px;
+
+        thead th,
+        tbody td {
+          padding: 6px 8px;
+        }
+      }
+    }
+  }
+}

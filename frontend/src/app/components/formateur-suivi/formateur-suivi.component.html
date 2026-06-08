@@ -1,0 +1,40 @@
+<div class="action-page">
+
+  <div class="page-header">
+    <h1>📊 Suivi</h1>
+    <p>Sélectionnez une formation pour voir le suivi pédagogique</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des formations...</p>
+  </div>
+
+  <div *ngIf="!isLoading && formations.length === 0" class="empty-state">
+    <span class="empty-icon">📭</span>
+    <h3>Aucune formation disponible</h3>
+    <p>Vous n'avez pas encore de formations assignées.</p>
+  </div>
+
+  <div class="formations-list" *ngIf="!isLoading && formations.length > 0">
+    <div class="formation-card" *ngFor="let f of formations">
+      <div class="formation-info">
+        <span class="formation-titre">{{ f.titre }}</span>
+        <span class="formation-meta">
+          📅 {{ formatDate(f.dateDebut) }} → {{ formatDate(f.dateFin) }} &nbsp;·&nbsp;
+          👥 {{ f.capaciteActuelle }} / {{ f.capaciteMax }} inscrits
+        </span>
+        <span class="formation-desc" *ngIf="f.description">{{ f.description }}</span>
+      </div>
+      <div class="formation-right">
+        <span class="statut-badge" [ngClass]="getStatutClass(f.statut)">{{ getStatutLabel(f.statut) }}</span>
+        <button class="btn-go" (click)="goToSuivi(f.id)">
+          📊 Voir le suivi
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

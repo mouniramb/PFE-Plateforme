@@ -1,0 +1,103 @@
+<div class="planning-container">
+
+  <!-- Navigation apprenant -->
+  <header *ngIf="userRole === 'APPRENANT'" class="apprenant-header">
+    <span class="brand">FormaPro</span>
+    <nav class="header-nav">
+      <a routerLink="/catalogue" class="nav-link">Catalogue</a>
+      <a routerLink="/mes-inscriptions" class="nav-link">Mes inscriptions</a>
+      <a routerLink="/mon-planning" class="nav-link nav-link--active">Mon planning</a>
+      <a routerLink="/mes-notes" class="nav-link">Mes notes</a>
+      <a routerLink="/mes-presences" class="nav-link">Mes présences</a>
+      <a routerLink="/mon-suivi" class="nav-link">Mon suivi</a>
+    </nav>
+  </header>
+
+  <div class="planning-header">
+    <h1>📅 Planning</h1>
+    <div class="week-controls">
+      <button (click)="previousWeek()" class="btn-week">← Semaine précédente</button>
+      <span class="week-label">{{ getWeekLabel() }}</span>
+      <button (click)="nextWeek()" class="btn-week">Semaine suivante →</button>
+    </div>
+  </div>
+
+  <div *ngIf="seances.length === 0" class="empty-planning">
+    <div class="empty-icon">📅</div>
+    <p class="empty-title">Aucune séance cette semaine</p>
+    <p class="empty-sub">Naviguez vers une autre semaine ou attendez qu'une séance soit planifiée.</p>
+  </div>
+
+  <div class="calendar-grid">
+    <div class="time-column">
+      <div class="time-header"></div>
+      <div *ngFor="let heure of heures" class="time-slot">{{ heure }}:00</div>
+    </div>
+
+    <div *ngFor="let jour of jours; let i = index" class="day-column">
+      <div class="day-header">
+        <div class="day-name">{{ jour }}</div>
+        <div class="day-date">{{ getDayDate(i) }}</div>
+      </div>
+
+      <div *ngFor="let heure of heures" class="calendar-cell">
+        <div *ngFor="let seance of getSeancesForSlot(i, heure)" 
+             [ngClass]="'seance ' + getStatutClass(seance.statut)"
+             (click)="showSeanceDetail(seance)">
+          <div class="seance-titre">{{ seance.titre }}</div>
+          <div class="seance-time">{{ seance.dateHeureDebut | date:'HH:mm' }} - {{ seance.dateHeureFin | date:'HH:mm' }}</div>
+          <div class="seance-room">{{ seance.salle?.nom || '-' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div *ngIf="showDetailPanel" class="detail-panel-overlay" (click)="closeDetailPanel()">
+    <div class="detail-panel" (click)="$event.stopPropagation()">
+      <div class="panel-header">
+        <h2>{{ selectedSeanceDetail?.titre }}</h2>
+        <button class="close-btn" (click)="closeDetailPanel()">✕</button>
+      </div>
+
+      <div *ngIf="selectedSeanceDetail" class="panel-content">
+        <div class="detail-row">
+          <strong>Formation :</strong>
+          <span>{{ selectedSeanceDetail.formation.titre }}</span>
+        </div>
+        <div class="detail-row">
+          <strong>Formateur :</strong>
+          <span>{{ selectedSeanceDetail.formateur?.nom || '-' }} {{ selectedSeanceDetail.formateur?.prenom || '' }}</span>
+        </div>
+        <div class="detail-row">
+          <strong>Date/Heure :</strong>
+          <span>{{ selectedSeanceDetail.dateHeureDebut | date:'dd/MM/yyyy HH:mm' }} - {{ selectedSeanceDetail.dateHeureFin | date:'HH:mm' }}</span>
+        </div>
+        <div class="detail-row">
+          <strong>Salle :</strong>
+          <span *ngIf="selectedSeanceDetail.salle">{{ selectedSeanceDetail.salle.nom }} ({{ selectedSeanceDetail.salle.localisation }})</span>
+          <span *ngIf="!selectedSeanceDetail.salle">-</span>
+        </div>
+        <div class="detail-row">
+          <strong>Durée :</strong>
+          <span>{{ selectedSeanceDetail.dureeMinutes }} minutes</span>
+        </div>
+        <div class="detail-row">
+          <strong>Statut :</strong>
+          <span [ngClass]="'badge badge-' + selectedSeanceDetail.statut.toLowerCase()">{{ selectedSeanceDetail.statut }}</span>
+        </div>
+        <div class="detail-description">
+          <strong>Description :</strong>
+          <p>{{ selectedSeanceDetail.description || 'Aucune description' }}</p>
+        </div>
+
+        <div class="panel-actions">
+          <button *ngIf="canSaisirPresences()" class="btn btn-primary" (click)="navigateToPresences(selectedSeanceDetail!)">
+            Saisir présences
+          </button>
+          <button class="btn btn-secondary" (click)="closeDetailPanel()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

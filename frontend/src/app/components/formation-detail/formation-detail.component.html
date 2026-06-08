@@ -1,20 +1,4 @@
 <div class="page">
-  <header class="topbar">
-    <a routerLink="/catalogue" class="brand">
-      <span class="brand-icon">⬡</span>
-      <span class="brand-text">FormaPro</span>
-    </a>
-
-    <nav class="topbar-nav">
-      <a routerLink="/catalogue" class="nav-link">Catalogue</a>
-      <a *ngIf="isApprenant()" routerLink="/mes-inscriptions" class="nav-link">Mes inscriptions</a>
-      <a *ngIf="isAdmin()" routerLink="/admin/dashboard" class="nav-link">Admin</a>
-      <a *ngIf="isFormateur()" routerLink="/formateur/dashboard" class="nav-link">Formateur</a>
-    </nav>
-
-    <button *ngIf="isLoggedIn()" class="btn-logout" (click)="logout()">Déconnexion</button>
-    <button *ngIf="!isLoggedIn()" class="btn-login" (click)="goToLogin()">Connexion</button>
-  </header>
 
   <div class="alert alert-success" *ngIf="successMessage">✓ {{ successMessage }}</div>
   <div class="alert alert-error" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
@@ -87,7 +71,7 @@
 
       <aside class="sidebar-column">
         <div class="sticky-card">
-          <div class="price">{{ item.prix | currency:'EUR':'symbol':'1.0-0' }}</div>
+          <div class="price">{{ item.prix | number:'1.0-0' }} DT</div>
 
           <button class="btn-cta" *ngIf="isApprenant() && item.placesDisponibles" (click)="openInscriptionModal()">
             S'inscrire

@@ -1,0 +1,62 @@
+<div class="suivi-formation-container">
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">← Retour</button>
+    <h1>📊 Suivi de Pédagogique - Formation</h1>
+    <button class="btn btn-export" (click)="exportCSV()">📥 Exporter CSV</button>
+  </div>
+
+  <div class="stats-globales">
+    <div class="stat">
+      <div class="stat-label">Nombre d'inscrits</div>
+      <div class="stat-value">{{ suiviList.length }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Moyenne de classe</div>
+      <div [ngClass]="'stat-value ' + getMoyenneColor(getMoyenneClasse())">
+        {{ getMoyenneClasse().toFixed(2) }}/20
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Taux de présence moyen</div>
+      <div [ngClass]="'stat-value ' + getTauxColor(getMoyenneTauxPresence())">
+        {{ (getMoyenneTauxPresence() * 100).toFixed(1) }}%
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Apprenant</th>
+          <th>Email</th>
+          <th>Présences</th>
+          <th>Taux présence</th>
+          <th>Moyenne</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stats of suiviList">
+          <td>{{ stats.nom }} {{ stats.prenom }}</td>
+          <td>{{ stats.email }}</td>
+          <td>{{ stats.seancesAssistees }}/{{ stats.totalSeances }}</td>
+          <td>
+            <div class="taux-bar" [ngClass]="getTauxColor(stats.tauxPresence)">
+              <div class="taux-fill" [style.width.%]="stats.tauxPresence * 100"></div>
+              <span>{{ (stats.tauxPresence * 100).toFixed(1) }}%</span>
+            </div>
+          </td>
+          <td>
+            <span [ngClass]="'moyenne-badge ' + getMoyenneColor(stats.moyenneGenerale)">
+              {{ stats.moyenneGenerale.toFixed(2) }}
+            </span>
+          </td>
+          <td>
+            <button class="btn-detail" [routerLink]="['/admin/formations', formationId, 'suivi', 'apprenant', stats.apprenantId]" title="Voir détail">👁️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

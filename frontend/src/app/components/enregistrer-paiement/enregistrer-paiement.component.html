@@ -1,0 +1,302 @@
+<div class="page-wrapper" [class.embedded]="embedded">
+
+  <!-- Header (masqué en mode modal) -->
+  <header class="app-header" *ngIf="!embedded">
+    <div class="header-brand">
+      <span class="brand-icon">&#x2B21;</span>
+      <span class="brand-name">FormaPro</span>
+    </div>
+    <nav class="header-nav">
+      <a routerLink="/admin/dashboard" class="nav-link">Tableau de bord</a>
+      <a routerLink="/admin/paiements" class="nav-link nav-link--active">Paiements</a>
+    </nav>
+    <button class="btn-logout" (click)="logout()">Déconnexion</button>
+  </header>
+
+  <div class="page-content">
+    <h2 class="modal-title" *ngIf="embedded">Enregistrer un paiement</h2>
+    <div class="page-header" *ngIf="!embedded">
+      <h1 class="page-title">Enregistrer un Paiement</h1>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert-success">{{ successMessage }}</div>
+
+    <form [formGroup]="paiementForm" (ngSubmit)="submit()" class="payment-form">
+
+      <!-- TOGGLE TYPE -->
+      <div class="type-toggle">
+        <button type="button" class="type-btn"
+          [class.type-btn--active]="isForApprenantMode"
+          (click)="setTypePaiement('APPRENANT')">
+          👤 Paiement Apprenant
+        </button>
+        <button type="button" class="type-btn"
+          [class.type-btn--active]="isForFormateurMode"
+          (click)="setTypePaiement('FORMATEUR')">
+          👨‍🏫 Paiement Formateur
+        </button>
+      </div>
+
+      <!-- ══════════ MODE APPRENANT ══════════ -->
+      <ng-container *ngIf="isForApprenantMode">
+
+        <!-- APPRENANT -->
+        <div class="form-section">
+          <h2 class="section-title">Sélectionner l'apprenant</h2>
+          <div *ngIf="isLoadingApprenants" class="spinner-sm"></div>
+          <div class="form-group" *ngIf="!isLoadingApprenants">
+            <label class="form-label">Apprenant <span class="required">*</span></label>
+            <select formControlName="apprenantId" class="form-select"
+              [class.input-error]="paiementForm.get('apprenantId')?.invalid && paiementForm.get('apprenantId')?.touched">
+              <option [ngValue]="null">-- Choisir un apprenant --</option>
+              <option *ngFor="let a of apprenants" [value]="a.id">
+                {{ a.prenom }} {{ a.nom }} — {{ a.email }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- FORMATION avec dates -->
+        <div class="form-section" *ngIf="paiementForm.get('apprenantId')?.value">
+          <h2 class="section-title">Sélectionner la formation</h2>
+          <div *ngIf="isLoadingFormations" class="spinner-sm"></div>
+          <div *ngIf="!isLoadingFormations && formations.length === 0" class="info-box info-box--warn">
+            ⚠️ Aucune formation disponible.
+          </div>
+          <ng-container *ngIf="!isLoadingFormations && formations.length > 0">
+            <div class="formations-list">
+              <div class="formation-card"
+                *ngFor="let f of formations"
+                [class.formation-card--active]="paiementForm.get('formationId')?.value == f.id"
+                (click)="selectFormation(f)"
+                style="cursor:pointer">
+                <div class="formation-card-body">
+                  <span class="formation-titre">{{ f.titre }}</span>
+                  <span class="formation-prix">{{ f.prix > 0 ? f.prix + ' DT' : '—' }}</span>
+                </div>
+                <div class="formation-dates" *ngIf="f.dateDebut && f.dateFin">
+                  📅 {{ f.dateDebut | date:'dd/MM/yyyy' }} → {{ f.dateFin | date:'dd/MM/yyyy' }}
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- MONTANT -->
+        <div class="form-section" *ngIf="paiementForm.get('formationId')?.value">
+          <h2 class="section-title">Montant</h2>
+          <div class="form-group">
+            <label class="form-label">Montant (DT) <span class="required">*</span></label>
+            <input type="number" formControlName="montant" class="form-input" min="0.01" step="0.01">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Remise (DT) <span class="form-hint">— optionnel</span></label>
+            <input type="number" formControlName="remise" class="form-input" min="0" step="0.01" placeholder="0">
+          </div>
+
+          <div class="montant-net-box" *ngIf="montantNet > 0">
+            <span class="montant-net-label">Montant net à payer</span>
+            <span class="montant-net-value">{{ montantNet }} DT</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Date de paiement <span class="required">*</span></label>
+            <input type="date" formControlName="datePaiement" class="form-input">
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- ══════════ MODE FORMATEUR ══════════ -->
+      <ng-container *ngIf="isForFormateurMode">
+
+        <!-- FORMATEUR -->
+        <div class="form-section">
+          <h2 class="section-title">Sélectionner le formateur</h2>
+          <div *ngIf="isLoadingFormateurs" class="spinner-sm"></div>
+          <div class="form-group" *ngIf="!isLoadingFormateurs">
+            <label class="form-label">Formateur <span class="required">*</span></label>
+            <select formControlName="formateurId" class="form-select"
+              [class.input-error]="paiementForm.get('formateurId')?.invalid && paiementForm.get('formateurId')?.touched">
+              <option [ngValue]="null">-- Choisir un formateur --</option>
+              <option *ngFor="let f of formateurs" [value]="f.id">
+                {{ f.prenom }} {{ f.nom }} — {{ f.email }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- FORMATION sans dates -->
+        <div class="form-section" *ngIf="paiementForm.get('formateurId')?.value">
+          <h2 class="section-title">Sélectionner la formation</h2>
+          <div *ngIf="isLoadingFormations" class="spinner-sm"></div>
+          <div *ngIf="!isLoadingFormations && formations.length === 0" class="info-box info-box--warn">
+            ⚠️ Aucune formation disponible.
+          </div>
+          <ng-container *ngIf="!isLoadingFormations && formations.length > 0">
+            <div class="formations-list">
+              <div class="formation-card"
+                *ngFor="let f of formations"
+                [class.formation-card--active]="paiementForm.get('formationId')?.value == f.id"
+                (click)="selectFormation(f)"
+                style="cursor:pointer">
+                <div class="formation-card-body">
+                  <span class="formation-titre">{{ f.titre }}</span>
+                  <span class="formation-prix">{{ f.prix > 0 ? f.prix + ' DT' : '—' }}</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- MONTANT sans remise -->
+        <div class="form-section" *ngIf="paiementForm.get('formationId')?.value">
+          <h2 class="section-title">Montant</h2>
+          <div class="form-group">
+            <label class="form-label">Montant (DT) <span class="required">*</span></label>
+            <input type="number" formControlName="montant" class="form-input" min="0.01" step="0.01">
+          </div>
+          <div class="montant-net-box" *ngIf="montantNet > 0">
+            <span class="montant-net-label">Montant net</span>
+            <span class="montant-net-value">{{ montantNet }} DT</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date de paiement <span class="required">*</span></label>
+            <input type="date" formControlName="datePaiement" class="form-input">
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- MODE DE PAIEMENT (commun aux deux) -->
+      <div class="form-section" *ngIf="paiementForm.get('formationId')?.value">
+        <h2 class="section-title">Mode de paiement autorisé</h2>
+        <div class="modes-grid">
+
+          <button type="button" class="mode-card"
+            [class.mode-card--active]="selectedMode === 'FORMATION'"
+            (click)="paiementForm.get('modePaiement')!.setValue('FORMATION')">
+            <span class="mode-icon">📅</span>
+            <span class="mode-label">Annuel</span>
+            <span class="mode-price" *ngIf="config?.prixFormation">{{ formatDT(config!.prixFormation) }}</span>
+          </button>
+
+          <button type="button" class="mode-card"
+            [class.mode-card--active]="selectedMode === 'TRANCHE'"
+            (click)="paiementForm.get('modePaiement')!.setValue('TRANCHE')">
+            <span class="mode-icon">📊</span>
+            <span class="mode-label">Par tranches</span>
+            <span class="mode-price">{{ nombreTranches }} tranches</span>
+          </button>
+
+          <button type="button" class="mode-card"
+            [class.mode-card--active]="selectedMode === 'SEANCE'"
+            (click)="paiementForm.get('modePaiement')!.setValue('SEANCE')">
+            <span class="mode-icon">🎓</span>
+            <span class="mode-label">Par séance</span>
+            <span class="mode-price" *ngIf="config?.prixParSeance">{{ formatDT(config?.prixParSeance) }}/séance</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- DÉTAILS DU MODE SÉLECTIONNÉ -->
+      <div class="form-section mode-details" *ngIf="selectedMode">
+
+        <!-- ANNUEL (FORMATION) -->
+        <ng-container *ngIf="selectedMode === 'FORMATION'">
+          <div class="mode-detail-info">
+            <div class="detail-row">
+              <span class="detail-label">Type</span>
+              <span class="detail-value">Paiement annuel (formation complète)</span>
+            </div>
+            <div class="detail-row" *ngIf="config?.prixFormation">
+              <span class="detail-label">Montant total</span>
+              <span class="detail-value highlight">{{ formatDT(config!.prixFormation) }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- TRANCHE -->
+        <ng-container *ngIf="selectedMode === 'TRANCHE'">
+          <div class="form-group">
+            <label class="form-label">Nombre de tranches</label>
+            <div class="tranche-count-row">
+              <button type="button" class="tranche-count-btn"
+                *ngFor="let n of TRANCHE_OPTIONS"
+                [class.tranche-count-btn--active]="nombreTranches === n"
+                (click)="onNombreTranchesChange(n)">
+                {{ n }}
+              </button>
+            </div>
+            <small class="hint" *ngIf="paiementForm.get('montant')?.value">
+              Montant par tranche ≈ {{ +(paiementForm.get('montant')!.value / nombreTranches).toFixed(2) }} DT
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Sélectionner la tranche à payer <span class="required">*</span></label>
+            <div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.5rem;">
+              <button type="button" class="tranche-btn"
+                *ngFor="let t of tranchesCalc"
+                [class.tranche-btn--active]="paiementForm.get('trancheNumber')?.value == t.num"
+                (click)="selectTranche(t.num, t.montant)"
+                style="display:flex; flex-direction:column; align-items:center; padding:0.75rem; min-width:110px; border-radius:10px; border:2px solid #E2E6EF; background:#F7F8FA; cursor:pointer; gap:4px;">
+                <span *ngIf="paiementForm.get('trancheNumber')?.value == t.num"
+                  style="color:#16A34A; font-size:1.1rem; font-weight:900;">✓</span>
+                <span style="font-size:0.75rem; color:#6B7280; font-weight:600;">Tranche {{ t.num }}</span>
+                <span style="font-size:1rem; font-weight:700; color:#0D0F14;">{{ t.montant }} DT</span>
+                <span *ngIf="paiementForm.get('trancheNumber')?.value == t.num"
+                  style="font-size:0.68rem; color:#16A34A; background:#DCFCE7; padding:1px 6px; border-radius:10px;">
+                  Sélectionnée
+                </span>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- SÉANCE -->
+        <ng-container *ngIf="selectedMode === 'SEANCE'">
+          <div class="form-group">
+            <label class="form-label">Séance à payer <span class="required">*</span></label>
+            <div *ngIf="isLoadingSeances" class="spinner-sm"></div>
+            <div *ngIf="!isLoadingSeances && seances.length === 0" class="info-box info-box--warn">
+              Aucune séance pour cette formation.
+            </div>
+            <div class="seances-list" *ngIf="seances.length > 0">
+              <button type="button" class="seance-btn"
+                *ngFor="let s of seances"
+                [class.seance-btn--active]="paiementForm.get('seanceId')?.value == s.id"
+                (click)="paiementForm.get('seanceId')!.setValue(s.id); updateMontant()">
+                <span class="seance-titre">{{ s.titre }}</span>
+                <span class="seance-date">{{ s.dateHeureDebut | date:'dd/MM/yyyy HH:mm' }}</span>
+                <span class="seance-statut" [ngClass]="'seance-statut--' + (s.statut || 'planifiee').toLowerCase()">
+                  {{ s.statut || 'PLANIFIEE' }}
+                </span>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- NOTES (commun à tous les modes) -->
+        <div class="form-group">
+          <label class="form-label">Notes (optionnel)</label>
+          <textarea formControlName="notes" class="form-textarea" rows="2"
+            placeholder="Informations complémentaires..."></textarea>
+        </div>
+      </div>
+
+      <!-- BOUTONS -->
+      <div class="form-actions" *ngIf="selectedMode">
+        <button type="button" class="btn-annuler" (click)="annuler()">Annuler</button>
+        <button type="submit" class="btn-submit" [disabled]="paiementForm.invalid || isSaving">
+          <span *ngIf="isSaving" class="btn-spinner"></span>
+          {{ isSaving ? 'Enregistrement...' : 'Enregistrer le paiement' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

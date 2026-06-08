@@ -1,0 +1,153 @@
+<div class="detail-page">
+
+  <!-- ── Header ── -->
+  <div class="page-header">
+    <button class="btn-retour" (click)="retour()">
+      ← Retour au suivi
+    </button>
+    <h1 class="page-title">Détail apprenant</h1>
+  </div>
+
+  <!-- ── Spinner ── -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des données...</p>
+  </div>
+
+  <!-- ── Erreur ── -->
+  <div *ngIf="errorMessage" class="alert-error">
+    <span>⚠ {{ errorMessage }}</span>
+    <button (click)="load()">Réessayer</button>
+  </div>
+
+  <ng-container *ngIf="!isLoading && data">
+
+    <!-- ── Carte identité apprenant ── -->
+    <div class="identity-card">
+      <div class="avatar">{{ initiales }}</div>
+      <div class="identity-info">
+        <h2>{{ data.prenom }} {{ data.nom }}</h2>
+        <p class="email">{{ data.email }}</p>
+        <p class="formation">📚 {{ data.formationTitre }}</p>
+      </div>
+    </div>
+
+    <!-- ── 4 cartes stats ── -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-label">Moyenne générale</div>
+        <div class="stat-value" [ngClass]="getMoyenneClass(data.moyenneGenerale)">
+          {{ data.moyenneGenerale | number:'1.2-2' }} / 20
+        </div>
+        <div class="stat-badge" [ngClass]="getMoyenneClass(data.moyenneGenerale)">
+          {{ getMoyenneLabel(data.moyenneGenerale) }}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Taux de présence</div>
+        <div class="stat-value" [ngClass]="getTauxClass(data.tauxPresence)">
+          {{ (data.tauxPresence * 100) | number:'1.1-1' }} %
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill"
+               [style.width.%]="data.tauxPresence * 100"
+               [ngClass]="getTauxClass(data.tauxPresence)">
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Notes enregistrées</div>
+        <div class="stat-value neutral">
+          {{ data.detailNotes ? data.detailNotes.length : 0 }}
+        </div>
+        <div class="stat-sub">évaluations</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Séances</div>
+        <div class="stat-value neutral">
+          {{ data.seancesAssistees }} / {{ data.totalSeances }}
+        </div>
+        <div class="stat-sub">présences enregistrées</div>
+      </div>
+
+    </div>
+
+    <!-- ── Section Notes ── -->
+    <section class="section">
+      <h2 class="section-title">📝 Notes</h2>
+
+      <div *ngIf="!data.detailNotes || data.detailNotes.length === 0" class="empty-state">
+        <span class="empty-icon">📭</span>
+        <p>Aucune note enregistrée pour cet apprenant.</p>
+      </div>
+
+      <div *ngIf="data.detailNotes && data.detailNotes.length > 0" class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type d'évaluation</th>
+              <th>Note</th>
+              <th>Coefficient</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let note of data.detailNotes">
+              <td>
+                <span class="type-badge">{{ getTypeLabel(note.typeEvaluation) }}</span>
+              </td>
+              <td>
+                <span class="note-value" [ngClass]="getMoyenneClass(note.valeur)">
+                  {{ note.valeur }} / 20
+                </span>
+              </td>
+              <td class="td-coef">× {{ note.coefficient }}</td>
+              <td class="td-comment">{{ note.commentaire || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Section Présences ── -->
+    <section class="section">
+      <h2 class="section-title">✅ Présences</h2>
+
+      <div *ngIf="!data.detailPresences || data.detailPresences.length === 0" class="empty-state">
+        <span class="empty-icon">📭</span>
+        <p>Aucune présence enregistrée pour cet apprenant.</p>
+      </div>
+
+      <div *ngIf="data.detailPresences && data.detailPresences.length > 0" class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Séance</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of data.detailPresences">
+              <td class="td-seance">{{ p.seanceTitre || '—' }}</td>
+              <td class="td-date">{{ formatDate(p.dateEnregistrement) }}</td>
+              <td>
+                <span class="presence-badge" [ngClass]="getPresenceClass(p.statut)">
+                  {{ getPresenceLabel(p.statut) }}
+                </span>
+              </td>
+              <td class="td-comment">{{ p.commentaire || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </ng-container>
+
+</div>

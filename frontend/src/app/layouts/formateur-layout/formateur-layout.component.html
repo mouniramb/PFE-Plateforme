@@ -1,0 +1,78 @@
+<div class="app-shell">
+
+  <!-- ═══════════════════════ SIDEBAR FIXE ═══════════════════════ -->
+  <aside class="sidebar">
+
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <a routerLink="/formateur/dashboard"
+         routerLinkActive="nav-item--active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span class="nav-label">Tableau de bord</span>
+      </a>
+
+      <a routerLink="/formateur/planning"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Mon planning</span>
+      </a>
+
+      <a routerLink="/formateur/revenus"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">Mes revenus</span>
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a routerLink="/formateur/presences"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">✅</span>
+        <span class="nav-label">Présences</span>
+      </a>
+
+      <a routerLink="/formateur/notes"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Notes</span>
+      </a>
+
+      <a routerLink="/formateur/suivi"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Suivi</span>
+      </a>
+
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">
+        {{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}
+      </div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Formateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Déconnexion">⏻</button>
+    </div>
+
+  </aside>
+
+  <!-- ═══════════════════════ CONTENU PRINCIPAL ═══════════════════════ -->
+  <main class="content-area">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

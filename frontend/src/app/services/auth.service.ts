@@ -59,6 +59,14 @@ export class AuthService {
     return this.getCurrentUser()?.role === 'ADMIN';
   }
 
+  getUserRole(): string {
+    return this.getCurrentUser()?.role || '';
+  }
+
+  getUserId(): number | null {
+    return this.getCurrentUser()?.id || null;
+  }
+
   isFormateur(): boolean {
     return this.getCurrentUser()?.role === 'FORMATEUR';
   }

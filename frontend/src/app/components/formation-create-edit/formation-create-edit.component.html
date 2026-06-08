@@ -112,9 +112,12 @@
 
         <div class="field" [class.field--error]="form.get('prix')?.invalid && form.get('prix')?.touched">
           <label>Prix</label>
-          <input type="number" min="0" formControlName="prix" />
-          <span class="error" *ngIf="form.get('prix')?.invalid && form.get('prix')?.touched">
+          <input type="number" min="0" max="800" formControlName="prix" />
+          <span class="error" *ngIf="form.get('prix')?.hasError('min') && form.get('prix')?.touched">
             Le prix doit être supérieur ou égal à 0.
+          </span>
+          <span class="error" *ngIf="form.get('prix')?.hasError('max') && form.get('prix')?.touched">
+            Le prix ne peut pas dépasser 800 DT.
           </span>
         </div>
 

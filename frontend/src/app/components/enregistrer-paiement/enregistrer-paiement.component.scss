@@ -1,0 +1,731 @@
+/* =====================================================
+   ENREGISTRER PAIEMENT – Styles (Admin + Apprenant)
+   ===================================================== */
+
+/* Liste de formations cliquables */
+.formations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.formation-card {
+  display: block;
+  border: 2px solid #E2E6EF;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: #F7F8FA;
+
+  &:hover { border-color: #2563FF; background: #EFF6FF; }
+
+  &.formation-card--active {
+    border-color: #2563FF;
+    background: #EFF6FF;
+  }
+
+  .formation-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .formation-titre {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0D0F14;
+  }
+
+  .formation-prix {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #2563FF;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+
+  .formation-dates {
+    margin-top: 0.3rem;
+    font-size: 0.78rem;
+    color: #6B7280;
+  }
+}
+
+/* Montant net box */
+.montant-net-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F0FDF4;
+  border: 1px solid #86EFAC;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  margin-bottom: 1rem;
+
+  .montant-net-label { font-size: 0.875rem; color: #166534; font-weight: 500; }
+  .montant-net-value { font-size: 1.1rem; font-weight: 700; color: #166534; }
+}
+
+.form-hint {
+  font-size: 0.78rem;
+  color: #6B7280;
+  font-weight: 400;
+  margin-left: 0.35rem;
+}
+
+/* Détails du mode sélectionné */
+.mode-details {
+  background: #F7F8FA;
+  border-radius: 10px;
+  padding: 1.25rem;
+  border: 1px dashed #E2E6EF;
+}
+
+.mode-detail-info {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #F7F8FA;
+
+  &:last-child { border-bottom: none; }
+
+  .detail-label { font-size: 0.82rem; color: #6B7280; }
+  .detail-value { font-size: 0.875rem; font-weight: 600; color: #0D0F14; }
+  .detail-value.highlight { color: #2563FF; font-size: 1rem; }
+}
+
+/* Toggle type de paiement */
+.type-toggle {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #E2E6EF;
+}
+
+.type-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #E2E6EF;
+  border-radius: 10px;
+  background: #F7F8FA;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { border-color: #2563FF; color: #2563FF; background: #EFF6FF; }
+
+  &.type-btn--active {
+    border-color: #2563FF;
+    background: #EFF6FF;
+    color: #2563FF;
+  }
+}
+
+/* Mode modal embarqué */
+.page-wrapper.embedded {
+  min-height: unset;
+  background: transparent;
+
+  .page-content {
+    padding: 0;
+    max-width: 100%;
+  }
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0D0F14;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #E2E6EF;
+}
+
+/* Grille des modes de paiement */
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 0.75rem;
+  border: 2px solid #E2E6EF;
+  border-radius: 12px;
+  background: #F7F8FA;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+
+  &:hover:not(:disabled) {
+    border-color: #2563FF;
+    background: #EFF6FF;
+  }
+
+  &.mode-card--active {
+    border-color: #2563FF;
+    background: #EFF6FF;
+    box-shadow: 0 0 0 3px rgba(37, 99, 255, 0.15);
+  }
+
+  &.mode-card--disabled,
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #F3F4F6;
+  }
+
+  .mode-icon {
+    font-size: 1.5rem;
+    display: block;
+  }
+
+  .mode-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0D0F14;
+    display: block;
+  }
+
+  .mode-price {
+    font-size: 0.78rem;
+    color: #2563FF;
+    font-weight: 500;
+    display: block;
+  }
+}
+
+/* Boutons de sélection de tranche */
+.tranches-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.tranche-btn {
+  padding: 0;
+  border: 2px solid #E2E6EF;
+  border-radius: 10px;
+  background: #F7F8FA;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 110px;
+  overflow: hidden;
+
+  .tranche-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.85rem 0.75rem;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover { border-color: #2563FF; background: #EFF6FF; }
+
+  &.tranche-btn--active {
+    border-color: #16A34A;
+    background: #F0FDF4;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+  }
+
+  .tranche-check {
+    font-size: 1.1rem;
+    color: #16A34A;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+  }
+
+  .tranche-num {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6B7280;
+    display: block;
+  }
+
+  .tranche-amount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0D0F14;
+    display: block;
+  }
+
+  .tranche-statut {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #16A34A;
+    background: #DCFCE7;
+    padding: 1px 6px;
+    border-radius: 10px;
+    display: block;
+    margin-top: 0.1rem;
+  }
+}
+
+/* Sélecteur nombre de tranches */
+.tranche-count-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tranche-count-btn {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #E2E6EF;
+  border-radius: 8px;
+  background: #F7F8FA;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { border-color: #2563FF; color: #2563FF; }
+  &.tranche-count-btn--active {
+    background: #2563FF;
+    border-color: #2563FF;
+    color: white;
+  }
+}
+
+.info-box {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  margin-bottom: 0.75rem;
+
+  &.info-box--warn {
+    background: #fff3cd;
+    color: #92400e;
+  }
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: #6B7280;
+  margin-top: 0.25rem;
+}
+
+/* Liste des séances */
+.seances-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.seance-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #E2E6EF;
+  border-radius: 8px;
+  background: #F7F8FA;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+
+  &:hover { border-color: #2563FF; background: #EFF6FF; }
+  &.seance-btn--active { border-color: #2563FF; background: #EFF6FF; }
+
+  .seance-titre { flex: 1; font-weight: 600; font-size: 0.875rem; color: #0D0F14; }
+  .seance-date  { font-size: 0.78rem; color: #6B7280; }
+  .seance-statut {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    &.seance-statut--planifiee { background: #dbeafe; color: #1d4ed8; }
+    &.seance-statut--en_cours  { background: #dcfce7; color: #15803d; }
+    &.seance-statut--terminee  { background: #f3f4f6; color: #374151; }
+  }
+}
+
+/* Page wrapper */
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #F7F8FA;
+}
+
+/* Header */
+.app-header {
+  background: #fff;
+  border-bottom: 1px solid #E5E7EB;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.brand-icon {
+  font-size: 24px;
+  color: #2563FF;
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: #2563FF;
+    background: #EFF4FF;
+  }
+}
+
+.nav-link--active {
+  color: #2563FF;
+  font-weight: 600;
+  border-bottom: 2px solid #2563FF;
+  border-radius: 0;
+}
+
+.btn-logout {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid #E5E7EB;
+  color: #6B7280;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: #FEF2F2;
+    color: #DC2626;
+    border-color: #FCA5A5;
+  }
+}
+
+/* Page content */
+.page-content {
+  flex: 1;
+  padding: 32px 24px;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+/* Alerts */
+.alert-error {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background: #F0FDF4;
+  color: #166534;
+  border: 1px solid #A7F3D0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.redirect-note {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+/* Spinner */
+.spinner-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 0;
+  color: #6B7280;
+  font-size: 14px;
+  gap: 12px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #E5E7EB;
+  border-top-color: #2563FF;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Facture summary card */
+.facture-summary {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.summary-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #F9FAFB;
+
+  &--last {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.summary-label {
+  font-size: 13px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+  text-align: right;
+}
+
+.amount-paid {
+  color: #10B981;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.amount-due {
+  color: #EF4444;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+/* Payment form */
+.payment-form {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.required {
+  color: #EF4444;
+  margin-left: 2px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111827;
+  background: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #2563FF;
+    box-shadow: 0 0 0 3px rgba(37, 99, 255, 0.1);
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.input-error {
+  border-color: #EF4444 !important;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  }
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+.field-error {
+  font-size: 12px;
+  color: #EF4444;
+  font-weight: 500;
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.btn-annuler {
+  background: transparent;
+  border: 1px solid #D1D5DB;
+  color: #374151;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #F9FAFB;
+  }
+}
+
+.btn-submit {
+  background: #2563FF;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) {
+    background: #1D4ED8;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}

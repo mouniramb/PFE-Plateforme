@@ -1,0 +1,162 @@
+<div class="admin-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">FormaPro</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" [class.active]="activeMenuId === 'dashboard'" class="nav-link">
+        <span class="icon">📊</span> Dashboard
+      </a>
+      <a routerLink="/admin/formations" [class.active]="activeMenuId === 'formations'" class="nav-link">
+        <span class="icon">🎓</span> Formations
+      </a>
+      <a routerLink="/admin/inscriptions" [class.active]="activeMenuId === 'inscriptions'" class="nav-link">
+        <span class="icon">📝</span> Inscriptions
+      </a>
+      <a routerLink="/admin/formateurs" [class.active]="activeMenuId === 'formateurs'" class="nav-link">
+        <span class="icon">👨‍🏫</span> Formateurs
+      </a>
+      <a routerLink="/admin/planning" [class.active]="activeMenuId === 'planning'" class="nav-link">
+        <span class="icon">📅</span> Planning
+      </a>
+      <a routerLink="/admin/salles" [class.active]="activeMenuId === 'salles'" class="nav-link">
+        <span class="icon">🏛</span> Salles
+      </a>
+      <a routerLink="/admin/seances" [class.active]="activeMenuId === 'seances'" class="nav-link">
+        <span class="icon">📋</span> Séances
+      </a>
+      <a routerLink="/admin/formations" [class.active]="activeMenuId === 'suivi'" class="nav-link">
+        <span class="icon">📊</span> Suivi pédago.
+      </a>
+      <a routerLink="/admin/tarifs" class="nav-link">
+        <span class="icon">💰</span> Tarifs
+      </a>
+      <a routerLink="/admin/factures" class="nav-link">
+        <span class="icon">📄</span> Factures
+      </a>
+      <a routerLink="/admin/paiements" class="nav-link">
+        <span class="icon">💳</span> Paiements
+      </a>
+      <a routerLink="/admin/rapports" class="nav-link">
+        <span class="icon">📈</span> Rapports
+      </a>
+      <a routerLink="/admin/statistiques" class="nav-link">
+        <span class="icon">📉</span> Statistiques
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Gestion des Salles</h1>
+      <button class="btn btn-primary" (click)="openCreateModal()">Nouvelle salle</button>
+    </div>
+
+    <!-- Messages -->
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-error">{{ errorMessage }}</div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Capacité</th>
+            <th>Localisation</th>
+            <th>Équipements</th>
+            <th>Disponible</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let salle of salles">
+            <td>{{ salle.nom }}</td>
+            <td>{{ salle.capacite }} places</td>
+            <td>{{ salle.localisation }}</td>
+            <td class="equipements">{{ salle.equipements }}</td>
+            <td>
+              <button 
+                class="badge" 
+                [ngClass]="salle.disponible ? 'badge-available' : 'badge-unavailable'"
+                (click)="toggleDisponibilite(salle)"
+              >
+                {{ salle.disponible ? 'Disponible' : 'Indisponible' }}
+              </button>
+            </td>
+            <td class="actions">
+              <ng-container *ngIf="deleteConfirmId === salle.id; else normalActionsSalle">
+                <span class="confirm-text">Confirmer ?</span>
+                <button class="btn-action btn-action--danger" (click)="deleteSalle(salle.id)">Oui</button>
+                <button class="btn-action btn-action--ghost" (click)="cancelDelete()">Non</button>
+              </ng-container>
+              <ng-template #normalActionsSalle>
+                <button class="btn-action btn-action--edit" (click)="openEditModal(salle)">✏ Modifier</button>
+                <button class="btn-action btn-action--delete" (click)="confirmDelete(salle.id)">🗑 Supprimer</button>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button [disabled]="currentPage === 0" (click)="previousPage()">← Précédent</button>
+      <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+      <button [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Suivant →</button>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? 'Modifier la salle' : 'Créer une nouvelle salle' }}</h2>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+
+      <form [formGroup]="salleForm" (ngSubmit)="saveSalle()" class="modal-body">
+        <div class="form-group">
+          <label>Nom *</label>
+          <input type="text" formControlName="nom" required />
+          <div class="error" *ngIf="salleForm.get('nom')?.invalid && salleForm.get('nom')?.touched">
+            Le nom est requis
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Capacité *</label>
+          <input type="number" formControlName="capacite" required min="1" />
+          <div class="error" *ngIf="salleForm.get('capacite')?.invalid && salleForm.get('capacite')?.touched">
+            La capacité est requise et doit être au minimum 1
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Localisation</label>
+          <input type="text" formControlName="localisation" />
+        </div>
+
+        <div class="form-group">
+          <label>Équipements</label>
+          <textarea formControlName="equipements" rows="3"></textarea>
+        </div>
+
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" formControlName="disponible" />
+            Disponible
+          </label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary" [disabled]="salleForm.invalid">
+            {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

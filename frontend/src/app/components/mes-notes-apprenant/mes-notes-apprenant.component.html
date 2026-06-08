@@ -1,0 +1,45 @@
+<div class="mes-notes-container">
+
+  <h1>📝 Mes Notes</h1>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <div *ngIf="!loading && notesByFormation.size === 0" class="empty">Aucune note disponible</div>
+
+  <div *ngFor="let formation of notesByFormation | keyvalue" class="formation-accordion">
+    <div class="accordion-header" (click)="toggleFormation(formation.key)">
+      <span class="arrow" [class.expanded]="isExpanded(formation.key)">▶</span>
+      <h3>{{ formation.key }}</h3>
+      <div class="moyenne-badge" [ngClass]="getMoyenneColor(getMoyenneFormation(formation.value))">
+        Moyenne : {{ getMoyenneFormation(formation.value).toFixed(2) }}/20
+      </div>
+    </div>
+
+    <div *ngIf="isExpanded(formation.key)" class="accordion-content">
+      <table>
+        <thead>
+          <tr>
+            <th>Séance</th>
+            <th>Type</th>
+            <th>Note</th>
+            <th>Date</th>
+            <th>Commentaire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let note of formation.value">
+            <td>{{ note.seanceTitre }}</td>
+            <td>{{ note.typeEvaluation }}</td>
+            <td>
+              <span [ngClass]="'badge ' + getNoteColor(note.valeur)">
+                {{ note.valeur }}/20
+              </span>
+            </td>
+            <td>{{ note.dateCreation | date:'dd/MM/yyyy' }}</td>
+            <td>{{ note.commentaire || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

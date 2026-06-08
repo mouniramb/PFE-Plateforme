@@ -1,0 +1,279 @@
+// Colors
+$ink: #0D0F14;
+$accent: #2563FF;
+$surface: #F7F8FA;
+$border: #E2E6EF;
+$muted: #6B7280;
+
+$green: #085041;
+$green-light: #E1F5EE;
+$orange: #633806;
+$orange-light: #FAEEDA;
+$red: #791F1F;
+$red-light: #FCEBEB;
+
+.saisie-container {
+  padding: 20px;
+  background: $surface;
+  min-height: 100vh;
+
+  .saisie-header {
+    margin-bottom: 20px;
+
+    .btn-back {
+      background: $accent;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      font-weight: 600;
+
+      &:hover {
+        background: darken($accent, 10%);
+      }
+    }
+
+    h1 {
+      color: $ink;
+      font-size: 28px;
+      margin: 0;
+    }
+  }
+
+  .seance-info {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .info-item {
+      color: $ink;
+      font-size: 14px;
+      line-height: 1.8;
+
+      strong {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+
+    &.alert-success {
+      background: $green-light;
+      color: $green;
+      border-left: 4px solid $green;
+    }
+
+    &.alert-error {
+      background: $red-light;
+      color: $red;
+      border-left: 4px solid $red;
+    }
+  }
+
+  .evaluation-section {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .eval-group {
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: $ink;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      input {
+        width: 150px;
+        padding: 8px 12px;
+        border: 1px solid $border;
+        border-radius: 6px;
+        font-size: 14px;
+
+        &:focus {
+          outline: none;
+          border-color: $accent;
+        }
+      }
+    }
+
+    .eval-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .eval-tab {
+        padding: 8px 16px;
+        border: 2px solid $border;
+        background: white;
+        color: $muted;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: $accent;
+        }
+
+        &.active {
+          background: $accent;
+          color: white;
+          border-color: $accent;
+        }
+      }
+    }
+  }
+
+  .notes-table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        background: #FAFBFC;
+        border-bottom: 1px solid $border;
+
+        th {
+          padding: 12px 16px;
+          text-align: left;
+          font-weight: 600;
+          color: $ink;
+          font-size: 14px;
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid $border;
+
+          &:hover {
+            background: $surface;
+          }
+
+          td {
+            padding: 12px 16px;
+            color: $ink;
+            font-size: 14px;
+
+            &.apprenant-name {
+              font-weight: 600;
+            }
+
+            &.note-input,
+            &.commentaire {
+              width: 200px;
+            }
+          }
+        }
+      }
+    }
+
+    .input-note,
+    .input-commentaire {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid $border;
+      border-radius: 4px;
+      font-size: 14px;
+
+      &:focus {
+        outline: none;
+        border-color: $accent;
+      }
+
+      &.note-vert {
+        color: $green;
+        font-weight: 600;
+      }
+
+      &.note-orange {
+        color: $orange;
+        font-weight: 600;
+      }
+
+      &.note-rouge {
+        color: $red;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .moyenne-section {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    color: $ink;
+
+    span {
+      font-size: 20px;
+      margin-left: 8px;
+
+      &.moyenne-vert {
+        color: $green;
+      }
+
+      &.moyenne-orange {
+        color: $orange;
+      }
+
+      &.moyenne-rouge {
+        color: $red;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+
+    .btn {
+      padding: 12px 24px;
+      background: $accent;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: darken($accent, 10%);
+        box-shadow: 0 4px 12px rgba($accent, 0.3);
+      }
+
+      &.btn-primary {
+        background: $accent;
+      }
+    }
+  }
+}

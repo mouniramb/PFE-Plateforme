@@ -1,0 +1,154 @@
+<div class="pay-page">
+
+  <!-- ══ EN-TÊTE ══════════════════════════════════════════════════════ -->
+  <div class="pay-header">
+    <div>
+      <h1>💳 Mes Paiements</h1>
+      <p class="pay-subtitle">Suivi de vos paiements par formation</p>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-error">⚠ {{ errorMessage }}</div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ══ STATISTIQUES ═══════════════════════════════════════════════ -->
+    <div class="stats-row">
+
+      <div class="stat-card stat-card--green">
+        <div class="stat-icon-wrap">✅</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ totalPaye | number:'1.2-2' }} DT</span>
+          <span class="stat-label">Total validé</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--yellow">
+        <div class="stat-icon-wrap">⏳</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ totalEnAttente | number:'1.2-2' }} DT</span>
+          <span class="stat-label">En attente</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--blue">
+        <div class="stat-icon-wrap">🎓</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ formations.length }}</span>
+          <span class="stat-label">Formations</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--purple">
+        <div class="stat-icon-wrap">📋</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ paiements.length }}</span>
+          <span class="stat-label">Paiements</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ ÉTAT VIDE ═════════════════════════════════════════════════ -->
+    <div *ngIf="formations.length === 0" class="empty-state">
+      <span class="empty-icon">📭</span>
+      <h3>Aucun paiement enregistré</h3>
+      <p>Vous n'avez pas encore de paiements enregistrés.</p>
+    </div>
+
+    <!-- ══ CARTES FORMATIONS ═══════════════════════════════════════════ -->
+    <div class="cards-grid" *ngIf="formations.length > 0">
+
+      <div class="pay-card" *ngFor="let f of formations">
+
+        <!-- En-tête carte -->
+        <div class="card-head" [ngClass]="'card-head--' + f.statut.toLowerCase()">
+          <div class="card-head-left">
+            <span class="card-mode-icon">{{ getModeIcon(f.modePaiement) }}</span>
+            <div>
+              <h3 class="card-formation-titre">{{ f.formationTitre }}</h3>
+              <span class="card-mode-label">{{ getModeLabel(f.modePaiement) }}</span>
+            </div>
+          </div>
+          <span class="card-statut-badge" [ngClass]="getCardStatutClass(f.statut)">
+            {{ getCardStatutLabel(f.statut) }}
+          </span>
+        </div>
+
+        <!-- Corps carte -->
+        <div class="card-body">
+
+          <!-- Infos financières -->
+          <div class="finance-grid">
+            <div class="finance-item">
+              <span class="finance-label">Total facturé</span>
+              <span class="finance-value">{{ f.totalBrut | number:'1.2-2' }} DT</span>
+            </div>
+            <div class="finance-item finance-item--green">
+              <span class="finance-label">Montant payé</span>
+              <span class="finance-value">{{ f.totalPaye | number:'1.2-2' }} DT</span>
+            </div>
+            <div class="finance-item" [ngClass]="f.restant > 0 ? 'finance-item--red' : 'finance-item--green'">
+              <span class="finance-label">Restant</span>
+              <span class="finance-value">{{ f.restant | number:'1.2-2' }} DT</span>
+            </div>
+          </div>
+
+          <!-- Tranches (mode TRANCHE uniquement) -->
+          <div class="tranches-info" *ngIf="f.modePaiement === 'TRANCHE' && f.totalTranches > 0">
+            <span class="tranches-label">Tranches :</span>
+            <div class="tranches-dots">
+              <span *ngFor="let t of [].constructor(f.totalTranches); let i = index"
+                class="tranche-dot"
+                [ngClass]="i < f.tranchePayee ? 'tranche-dot--paid' : 'tranche-dot--pending'"
+                [title]="'Tranche ' + (i+1)">
+                {{ i < f.tranchePayee ? '✅' : '⭕' }}
+              </span>
+            </div>
+            <span class="tranches-count">{{ f.tranchePayee }}/{{ f.totalTranches }} payées</span>
+          </div>
+
+          <!-- Barre de progression -->
+          <div class="progress-wrap">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="progressPercent(f)"
+                [ngClass]="f.statut === 'VALIDE' ? 'progress-fill--green' : 'progress-fill--blue'">
+              </div>
+            </div>
+            <span class="progress-pct">{{ progressPercent(f) }}%</span>
+          </div>
+
+          <!-- Alerte restant -->
+          <div *ngIf="f.restant > 0" class="alert-restant">
+            ⚠️ {{ f.restant | number:'1.2-2' }} DT en attente de validation
+          </div>
+
+          <!-- Détails dépliables -->
+          <div class="details-toggle" (click)="toggleDetails(f.formationId)">
+            {{ isExpanded(f.formationId) ? '▲ Masquer le détail' : '▼ Voir le détail des paiements' }}
+          </div>
+
+          <div class="details-list" *ngIf="isExpanded(f.formationId)">
+            <div class="detail-row" *ngFor="let p of f.paiements">
+              <span class="detail-date">{{ p.datePaiement | date:'dd/MM/yyyy' }}</span>
+              <span class="detail-mode">{{ getModeLabel(p.modePaiement) }}</span>
+              <span *ngIf="p.trancheNumber" class="detail-tranche">T{{ p.trancheNumber }}</span>
+              <span class="detail-montant">{{ p.montantNet | number:'1.2-2' }} DT</span>
+              <span class="detail-badge" [ngClass]="getStatutClass(p.statut)">{{ getStatutLabel(p.statut) }}</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

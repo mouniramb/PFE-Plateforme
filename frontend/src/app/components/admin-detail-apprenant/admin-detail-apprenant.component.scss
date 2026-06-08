@@ -1,0 +1,299 @@
+$accent  : #2563FF;
+$ink     : #0D0F14;
+$surface : #F7F8FA;
+$border  : #E2E6EF;
+$muted   : #6B7280;
+$white   : #ffffff;
+
+// ─── Page ─────────────────────────────────────────────────────────────
+.detail-page {
+  max-width  : 900px;
+  margin     : 0 auto;
+  padding    : 32px 24px;
+  background : $surface;
+  min-height : 100vh;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────
+.page-header {
+  display     : flex;
+  align-items : center;
+  gap         : 16px;
+  margin-bottom: 28px;
+}
+
+.btn-retour {
+  padding       : 8px 18px;
+  background    : $white;
+  border        : 1.5px solid $border;
+  border-radius : 8px;
+  font-size     : 14px;
+  font-weight   : 600;
+  color         : $ink;
+  cursor        : pointer;
+  transition    : border-color .15s, color .15s;
+  white-space   : nowrap;
+
+  &:hover { border-color: $accent; color: $accent; }
+}
+
+.page-title {
+  font-size   : 22px;
+  font-weight : 800;
+  color       : $ink;
+  margin      : 0;
+}
+
+// ─── Loading / Erreur ─────────────────────────────────────────────────
+.loading-state {
+  text-align : center;
+  padding    : 48px;
+  color      : $muted;
+
+  .spinner {
+    width         : 36px;
+    height        : 36px;
+    border        : 3px solid $border;
+    border-top-color: $accent;
+    border-radius : 50%;
+    animation     : spin .8s linear infinite;
+    margin        : 0 auto 12px;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.alert-error {
+  display         : flex;
+  justify-content : space-between;
+  align-items     : center;
+  padding         : 12px 16px;
+  background      : #FEE2E2;
+  border          : 1px solid #FECACA;
+  border-radius   : 8px;
+  color           : #991B1B;
+  font-size       : 14px;
+  margin-bottom   : 20px;
+
+  button {
+    padding       : 4px 12px;
+    background    : #991B1B;
+    color         : #fff;
+    border        : none;
+    border-radius : 6px;
+    cursor        : pointer;
+    font-size     : 13px;
+  }
+}
+
+// ─── Carte identité ───────────────────────────────────────────────────
+.identity-card {
+  display       : flex;
+  align-items   : center;
+  gap           : 20px;
+  background    : $white;
+  border        : 1px solid $border;
+  border-radius : 16px;
+  padding       : 24px;
+  margin-bottom : 24px;
+  box-shadow    : 0 2px 8px rgba(0,0,0,.06);
+}
+
+.avatar {
+  width           : 64px;
+  height          : 64px;
+  border-radius   : 50%;
+  background      : linear-gradient(135deg, #2563FF, #7C3AFF);
+  color           : #fff;
+  font-size       : 24px;
+  font-weight     : 800;
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  flex-shrink     : 0;
+  letter-spacing  : 1px;
+  box-shadow      : 0 4px 12px rgba(37,99,255,.35);
+}
+
+.identity-info {
+  flex: 1;
+
+  h2        { font-size: 20px; font-weight: 800; color: $ink; margin: 0 0 4px; }
+  .email    { font-size: 14px; color: $muted; margin: 0 0 4px; }
+  .formation{ font-size: 13px; color: $accent; font-weight: 600; margin: 0; }
+}
+
+// ─── Cartes stats ─────────────────────────────────────────────────────
+.stats-grid {
+  display               : grid;
+  grid-template-columns : repeat(4, 1fr);
+  gap                   : 14px;
+  margin-bottom         : 28px;
+
+  @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.stat-card {
+  background    : $white;
+  border        : 1px solid $border;
+  border-radius : 12px;
+  padding       : 18px;
+  text-align    : center;
+  box-shadow    : 0 1px 3px rgba(0,0,0,.04);
+}
+
+.stat-label {
+  font-size      : 11px;
+  font-weight    : 600;
+  color          : $muted;
+  text-transform : uppercase;
+  letter-spacing : .4px;
+  margin-bottom  : 8px;
+}
+
+.stat-value {
+  font-size   : 22px;
+  font-weight : 800;
+  margin-bottom: 6px;
+
+  &.excellent { color: #10B981; }
+  &.bon       { color: #2563FF; }
+  &.moyen     { color: #F59E0B; }
+  &.faible    { color: #EF4444; }
+  &.neutral   { color: $ink;    }
+}
+
+.stat-badge {
+  display       : inline-block;
+  padding       : 3px 10px;
+  border-radius : 20px;
+  font-size     : 12px;
+  font-weight   : 600;
+
+  &.excellent { background: #D1FAE5; color: #065F46; }
+  &.bon       { background: #DBEAFE; color: #1E40AF; }
+  &.moyen     { background: #FEF3C7; color: #92400E; }
+  &.faible    { background: #FEE2E2; color: #991B1B; }
+}
+
+.stat-sub { font-size: 12px; color: $muted; }
+
+// Barre progression présence
+.progress-bar-container {
+  height        : 6px;
+  background    : $border;
+  border-radius : 4px;
+  overflow      : hidden;
+  margin-top    : 8px;
+}
+
+.progress-bar-fill {
+  height        : 100%;
+  border-radius : 4px;
+  transition    : width .4s;
+
+  &.excellent { background: #10B981; }
+  &.bon       { background: #2563FF; }
+  &.moyen     { background: #F59E0B; }
+  &.faible    { background: #EF4444; }
+}
+
+// ─── Sections ─────────────────────────────────────────────────────────
+.section { margin-bottom: 28px; }
+
+.section-title {
+  font-size     : 17px;
+  font-weight   : 700;
+  color         : $ink;
+  margin        : 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom : 2px solid $border;
+}
+
+// ─── Tableau ──────────────────────────────────────────────────────────
+.table-wrapper {
+  background    : $white;
+  border        : 1px solid $border;
+  border-radius : 12px;
+  overflow      : auto;
+}
+
+.data-table {
+  width           : 100%;
+  border-collapse : collapse;
+
+  th {
+    background     : #F9FAFB;
+    padding        : 10px 14px;
+    font-size      : 12px;
+    font-weight    : 600;
+    color          : $muted;
+    text-align     : left;
+    text-transform : uppercase;
+    letter-spacing : .3px;
+    border-bottom  : 1px solid $border;
+  }
+
+  td {
+    padding       : 12px 14px;
+    font-size     : 13.5px;
+    color         : $ink;
+    border-bottom : 1px solid #F3F4F6;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td      { background: #F9FAFB; }
+}
+
+.td-comment { color: $muted; font-size: 13px; }
+.td-coef    { color: $muted; font-size: 13px; text-align: center; }
+.td-date    { white-space: nowrap; font-size: 13px; }
+.td-seance  { font-weight: 600; }
+
+// ─── Badges ───────────────────────────────────────────────────────────
+.type-badge {
+  padding       : 3px 10px;
+  background    : #EFF6FF;
+  color         : #1D4ED8;
+  border-radius : 20px;
+  font-size     : 12px;
+  font-weight   : 600;
+}
+
+.note-value {
+  font-weight : 700;
+  font-size   : 15px;
+
+  &.excellent { color: #10B981; }
+  &.bon       { color: #2563FF; }
+  &.moyen     { color: #F59E0B; }
+  &.faible    { color: #EF4444; }
+}
+
+.presence-badge {
+  padding       : 4px 12px;
+  border-radius : 20px;
+  font-size     : 12px;
+  font-weight   : 600;
+
+  &.badge-present { background: #D1FAE5; color: #065F46; }
+  &.badge-absent  { background: #FEE2E2; color: #991B1B; }
+  &.badge-retard  { background: #FEF3C7; color: #92400E; }
+  &.badge-excuse  { background: #EDE9FE; color: #5B21B6; }
+}
+
+// ─── État vide ────────────────────────────────────────────────────────
+.empty-state {
+  display         : flex;
+  flex-direction  : column;
+  align-items     : center;
+  padding         : 32px;
+  background      : $white;
+  border          : 1px solid $border;
+  border-radius   : 12px;
+  color           : $muted;
+
+  .empty-icon { font-size: 36px; margin-bottom: 8px; }
+  p           { margin: 0; font-size: 14px; }
+}

@@ -1,0 +1,62 @@
+<div class="saisie-container">
+  <div class="saisie-header">
+    <button class="btn-back" (click)="goBack()">← Retour</button>
+    <h1>Saisir les Présences</h1>
+  </div>
+
+  <div *ngIf="seance" class="seance-info">
+    <div class="info-item"><strong>Séance :</strong> {{ seance.titre }}</div>
+    <div class="info-item"><strong>Formation :</strong> {{ seance.formation.titre }}</div>
+    <div class="info-item"><strong>Date/Heure :</strong> {{ seance.dateHeureDebut | date:'dd/MM/yyyy HH:mm' }} - {{ seance.dateHeureFin | date:'HH:mm' }}</div>
+    <div class="info-item"><strong>Salle :</strong> {{ seance.salle?.nom || '-' }}</div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-error">{{ errorMessage }}</div>
+
+  <div class="controls">
+    <button class="btn btn-primary" (click)="setAllPresent()">Tout marquer Présent</button>
+    <button class="btn btn-secondary" (click)="setAllAbsent()">Tout marquer Absent</button>
+    
+    <div class="compteur">
+      <span class="badge badge-present">🟢 {{ getCompteurs().present }} présent(s)</span>
+      <span class="badge badge-absent">🔴 {{ getCompteurs().absent }} absent(s)</span>
+      <span class="badge badge-retard">🟠 {{ getCompteurs().retard }} retard(s)</span>
+      <span class="badge badge-excuse">⚫ {{ getCompteurs().excuse }} excusé(s)</span>
+    </div>
+  </div>
+
+  <div class="apprenants-list">
+    <div *ngFor="let apprenant of apprenants" class="apprenant-row">
+      <div class="apprenant-info">
+        <div class="avatar">{{ (apprenant.prenom[0] + apprenant.nom[0]).toUpperCase() }}</div>
+        <div class="details">
+          <div class="nom">{{ apprenant.nom }} {{ apprenant.prenom }}</div>
+          <div class="email">{{ apprenant.email }}</div>
+        </div>
+      </div>
+
+      <div class="statut-buttons">
+        <button 
+          *ngFor="let s of ['PRESENT', 'RETARD', 'ABSENT', 'EXCUSE']"
+          [ngClass]="'btn-statut ' + (apprenant.statut === s ? 'active' : '')"
+          [attr.data-statut]="s"
+          (click)="setPresenceStatus(apprenant, $any(s))">
+          {{ s }}
+        </button>
+      </div>
+
+      <input 
+        *ngIf="apprenant.statut === 'ABSENT' || apprenant.statut === 'EXCUSE'"
+        type="text" 
+        placeholder="Commentaire (optionnel)"
+        [(ngModel)]="apprenant.commentaire"
+        class="commentaire-input"
+      />
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" (click)="enregistrerPresences()">Enregistrer les présences</button>
+  </div>
+</div>

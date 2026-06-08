@@ -29,3 +29,24 @@ export const adminGuard: CanActivateFn = (route, state) => {
   router.navigate(['/login']);
   return false;
 };
+
+// Redirige les utilisateurs déjà connectés vers leur dashboard
+export const publicGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!authService.isLoggedIn()) {
+    return true;
+  }
+
+  const role = authService.getUserRole();
+  if (role === 'ADMIN') {
+    return router.createUrlTree(['/admin/dashboard']);
+  } else if (role === 'FORMATEUR') {
+    return router.createUrlTree(['/formateur/dashboard']);
+  } else if (role === 'APPRENANT') {
+    return router.createUrlTree(['/catalogue']);
+  }
+
+  return true;
+};

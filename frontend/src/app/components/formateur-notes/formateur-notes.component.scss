@@ -1,0 +1,57 @@
+$accent:#2563FF; $ink:#0D0F14; $border:#E2E6EF; $muted:#6B7280; $white:#fff; $surface:#F7F8FA;
+
+.action-page { padding: 32px; }
+
+.page-header {
+  margin-bottom: 28px;
+  h1 { font-size: 1.6rem; font-weight: 800; color: $ink; margin: 0 0 6px; }
+  p  { color: $muted; margin: 0; font-size: 0.9rem; }
+}
+
+.alert-error { background: #FEE2E2; color: #991B1B; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; }
+
+.loading-state { text-align: center; padding: 48px; color: $muted;
+  .spinner { width: 36px; height: 36px; border: 3px solid $border; border-top-color: $accent;
+    border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state { text-align: center; padding: 48px; color: $muted; background: $white; border: 1px solid $border; border-radius: 12px;
+  .empty-icon { display: block; font-size: 2.5rem; margin-bottom: 8px; }
+  h3 { font-size: 1.1rem; font-weight: 700; color: $ink; margin: 0 0 6px; }
+  p  { margin: 0; }
+}
+
+.seances-list { display: flex; flex-direction: column; gap: 12px; }
+
+.seance-card {
+  background: $white; border: 1px solid $border; border-radius: 12px;
+  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  transition: box-shadow .15s;
+  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+}
+
+.seance-info {
+  display: flex; flex-direction: column; gap: 4px; flex: 1;
+  .seance-titre { font-size: 0.95rem; font-weight: 700; color: $ink; }
+  .seance-meta  { font-size: 0.8rem; color: $muted; }
+  .seance-salle { font-size: 0.8rem; color: $muted; }
+}
+
+.seance-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+
+.statut-badge {
+  padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  &.statut-planifiee { background: #DBEAFE; color: #1E40AF; }
+  &.statut-en-cours  { background: #D1FAE5; color: #065F46; }
+  &.statut-terminee  { background: #F3F4F6; color: #4B5563; }
+  &.statut-annulee   { background: #FEE2E2; color: #991B1B; }
+}
+
+.btn-go {
+  padding: 8px 16px; background: #EDE9FE; color: #5B21B6;
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: background .15s;
+  &:hover { background: #DDD6FE; }
+}

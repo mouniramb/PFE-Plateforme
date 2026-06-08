@@ -1,0 +1,61 @@
+<div class="mes-presences-container">
+
+  <h1>📍 Mes Présences</h1>
+
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <div *ngIf="!loading && presencesByFormation.size === 0" class="empty">Aucune présence enregistrée</div>
+
+  <div *ngFor="let formation of presencesByFormation | keyvalue" class="formation-accordion">
+    <div class="accordion-header" (click)="toggleFormation(formation.key)">
+      <span class="arrow" [class.expanded]="isExpanded(formation.key)">▶</span>
+      <h3>{{ formation.key }}</h3>
+      
+      <div class="taux-section">
+        <div class="taux-gauge" [ngClass]="getTauxColor(getTauxPresence(formation.value))">
+          <div class="gauge-value">{{ (getTauxPresence(formation.value) * 100).toFixed(0) }}%</div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="isExpanded(formation.key)" class="accordion-content">
+      <div class="compteurs">
+        <span class="compteur compteur-present">
+          🟢 {{ getCompteurs(formation.value).present }} présent(s)
+        </span>
+        <span class="compteur compteur-absent">
+          🔴 {{ getCompteurs(formation.value).absent }} absent(s)
+        </span>
+        <span class="compteur compteur-retard">
+          🟠 {{ getCompteurs(formation.value).retard }} retard(s)
+        </span>
+        <span class="compteur compteur-excuse">
+          ⚫ {{ getCompteurs(formation.value).excuse }} excusé(s)
+        </span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Séance</th>
+            <th>Date/Heure</th>
+            <th>Statut</th>
+            <th>Commentaire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let presence of formation.value">
+            <td>{{ presence.seanceTitre }}</td>
+            <td>{{ presence.dateEnregistrement | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span [ngClass]="'badge ' + getStatutColor(presence.statut)">
+                {{ presence.statut }}
+              </span>
+            </td>
+            <td>{{ presence.commentaire || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

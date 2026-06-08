@@ -1,0 +1,80 @@
+<div class="page-content">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Statistiques</h1>
+      <p class="page-subtitle">Analyse des performances de la plateforme</p>
+    </div>
+  </div>
+
+  <div class="error-msg" *ngIf="error">{{ error }}</div>
+  <div class="loading-msg" *ngIf="loading">Chargement...</div>
+
+  <!-- Filtre dates -->
+  <div class="filters">
+    <input type="date" class="date-input" [(ngModel)]="dateDebut">
+    <input type="date" class="date-input" [(ngModel)]="dateFin">
+    <button class="btn-primary" (click)="filterByDate()">Filtrer</button>
+  </div>
+
+  <!-- Cartes de stats -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">📚</div>
+      <div class="card-content">
+        <h3>{{ stats?.nbFormations ?? 0 }}</h3>
+        <p>FORMATIONS</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">👥</div>
+      <div class="card-content">
+        <h3>{{ stats?.nbApprenants ?? 0 }}</h3>
+        <p>APPRENANTS</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">👨‍🏫</div>
+      <div class="card-content">
+        <h3>{{ stats?.nbInstructeurs ?? 0 }}</h3>
+        <p>INSTRUCTEURS</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">💰</div>
+      <div class="card-content">
+        <h3>{{ stats?.revenuTotal ?? 0 }} DT</h3>
+        <p>REVENU TOTAL</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau détails par formation -->
+  <div class="table-card" style="margin-top: 1.5rem;">
+    <h2 style="padding: 1rem 1rem 0; font-size: 1rem; font-weight: 600; color: #0D0F14;">
+      Détails par Formation
+    </h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Formation</th>
+          <th>Apprenants</th>
+          <th>Séances</th>
+          <th>Revenu (DT)</th>
+          <th>Taux Réussite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of formations">
+          <td>{{ f.nom }}</td>
+          <td>{{ f.nbApprenants }}</td>
+          <td>{{ f.nbSeances }}</td>
+          <td>{{ f.revenu }}</td>
+          <td>{{ f.tauxReussite }}%</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="formations.length === 0" class="empty-msg">Aucune donnée disponible</div>
+  </div>
+
+</div>

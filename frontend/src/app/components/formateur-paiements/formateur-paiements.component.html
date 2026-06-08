@@ -1,0 +1,118 @@
+<div class="pay-page">
+
+  <div class="pay-header">
+    <h1>💰 Paiements de mes apprenants</h1>
+    <p class="pay-subtitle">Suivi des paiements pour vos formations</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+  <div *ngIf="isLoading" class="loading-msg">Chargement...</div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card stat-card--green">
+      <span class="stat-icon">✅</span>
+      <div>
+        <div class="stat-value">{{ totalValide | number:'1.2-2' }} DT</div>
+        <div class="stat-label">Total validé</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--yellow">
+      <span class="stat-icon">⏳</span>
+      <div>
+        <div class="stat-value">{{ totalEnAttente | number:'1.2-2' }} DT</div>
+        <div class="stat-label">En attente</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--blue">
+      <span class="stat-icon">👥</span>
+      <div>
+        <div class="stat-value">{{ nbApprenants }}</div>
+        <div class="stat-label">Apprenants</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--purple">
+      <span class="stat-icon">📋</span>
+      <div>
+        <div class="stat-value">{{ paiements.length }}</div>
+        <div class="stat-label">Paiements</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLEAU GLOBAL -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <h2>Tous les paiements</h2>
+    </div>
+    <table class="data-table" *ngIf="paiements.length > 0">
+      <thead>
+        <tr>
+          <th>Apprenant</th>
+          <th>Formation</th>
+          <th>Mode</th>
+          <th>Tranche</th>
+          <th>Montant net</th>
+          <th>Date</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of paiements">
+          <td><strong>{{ p.apprenantPrenom }} {{ p.apprenantNom }}</strong></td>
+          <td>{{ p.formationTitre }}</td>
+          <td><span class="mode-badge">{{ getModeLabel(p.modePaiement) }}</span></td>
+          <td>
+            <span *ngIf="p.trancheNumber">T{{ p.trancheNumber }}</span>
+            <span *ngIf="!p.trancheNumber" class="muted">—</span>
+          </td>
+          <td><strong>{{ p.montantNet | number:'1.2-2' }} DT</strong></td>
+          <td>{{ p.datePaiement | date:'dd/MM/yyyy' }}</td>
+          <td><span class="statut-badge" [ngClass]="getStatutClass(p.statut)">{{ getStatutLabel(p.statut) }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!isLoading && paiements.length === 0" class="empty-state">
+      <span class="empty-icon">💳</span>
+      <p>Aucun paiement enregistré pour vos formations</p>
+    </div>
+  </div>
+
+  <!-- SYNTHÈSE PAR APPRENANT -->
+  <div class="table-card" *ngIf="apprenants.length > 0">
+    <div class="table-card-header">
+      <h2>Synthèse par apprenant</h2>
+    </div>
+    <div class="apprenant-details">
+      <div class="apprenant-card" *ngFor="let a of apprenants">
+        <div class="adc-header">
+          <div class="adc-name">👤 {{ a.apprenantPrenom }} {{ a.apprenantNom }}</div>
+          <div class="adc-amounts">
+            <span class="adc-paye">{{ a.totalPaye | number:'1.2-2' }} DT validés</span>
+            <span class="adc-attente" *ngIf="a.totalEnAttente > 0">
+              — {{ a.totalEnAttente | number:'1.2-2' }} DT en attente
+            </span>
+          </div>
+        </div>
+        <div class="adc-formations">
+          <div class="adc-formation" *ngFor="let f of a.formations">
+            <div class="adc-f-header">
+              <span class="adc-f-titre">🎓 {{ f.formationTitre }}</span>
+              <span class="adc-f-count">{{ f.paiements.length }} paiement(s)</span>
+            </div>
+            <div class="adc-f-paiements">
+              <div class="adc-f-p" *ngFor="let p of f.paiements">
+                <span class="fdc-mode">{{ getModeLabel(p.modePaiement) }}</span>
+                <span *ngIf="p.trancheNumber" class="fdc-tranche">T{{ p.trancheNumber }}</span>
+                <span class="fdc-montant">{{ p.montantNet | number:'1.2-2' }} DT</span>
+                <span class="fdc-date">{{ p.datePaiement | date:'dd/MM/yyyy' }}</span>
+                <span class="statut-badge" [ngClass]="getStatutClass(p.statut)">{{ getStatutLabel(p.statut) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

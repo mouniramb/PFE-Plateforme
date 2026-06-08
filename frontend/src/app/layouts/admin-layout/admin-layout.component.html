@@ -1,0 +1,122 @@
+<div class="app-shell">
+
+  <!-- ═══════════════════════ SIDEBAR FIXE ═══════════════════════ -->
+  <aside class="sidebar">
+
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">FormaPro</span>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <!-- ── Sprint 1-3 ── -->
+      <a routerLink="/admin/dashboard"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">◈</span>
+        <span class="nav-label">Tableau de bord</span>
+      </a>
+
+      <a routerLink="/admin/formations"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">◆</span>
+        <span class="nav-label">Formations</span>
+      </a>
+
+      <a routerLink="/admin/inscriptions"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">◉</span>
+        <span class="nav-label">Inscriptions</span>
+      </a>
+
+      <a routerLink="/admin/formateurs"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">▣</span>
+        <span class="nav-label">Formateurs</span>
+      </a>
+
+      <a routerLink="/admin/planning"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Planning</span>
+      </a>
+
+      <a routerLink="/admin/salles"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">🏛</span>
+        <span class="nav-label">Salles</span>
+      </a>
+
+      <a routerLink="/admin/seances"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Séances</span>
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <!-- ── Sprint 4 ── -->
+      <a routerLink="/admin/tarifs"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">Tarifs</span>
+      </a>
+
+      <a routerLink="/admin/factures"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📄</span>
+        <span class="nav-label">Factures</span>
+      </a>
+
+      <a routerLink="/admin/paiements"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">💳</span>
+        <span class="nav-label">Paiements</span>
+      </a>
+
+      <a routerLink="/admin/rapports"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Rapports</span>
+      </a>
+
+      <a routerLink="/admin/statistiques"
+         routerLinkActive="nav-item--active"
+         class="nav-item">
+        <span class="nav-icon">📉</span>
+        <span class="nav-label">Statistiques</span>
+      </a>
+
+
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">
+        {{ currentUser?.prenom?.charAt(0) }}{{ currentUser?.nom?.charAt(0) }}
+      </div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+        <span class="user-role">Administrateur</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Déconnexion">⏻</button>
+    </div>
+
+  </aside>
+
+  <!-- ═══════════════════════ CONTENU PRINCIPAL ═══════════════════════ -->
+  <main class="content-area">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

@@ -24,6 +24,10 @@ export class UserService {
     return this.http.get<UserResponse[]>(`${this.API_URL}/formateurs`);
   }
 
+  getAllApprenants(): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(`${this.API_URL}/apprenants`);
+  }
+
   getFormateurById(id: number): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.API_URL}/formateurs/${id}`);
   }

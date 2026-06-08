@@ -1,0 +1,143 @@
+<div class="pay-page">
+
+  <!-- EN-TÊTE -->
+  <div class="pay-header">
+    <h1>💳 Mes Paiements</h1>
+    <p class="pay-subtitle">Suivi de vos paiements par formation</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-error">⚠ {{ errorMessage }}</div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- STATISTIQUES -->
+    <div class="stats-row">
+      <div class="stat-card stat-card--green">
+        <div class="stat-icon-wrap">✅</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ totalPaye | number:'1.2-2' }} DT</span>
+          <span class="stat-label">Total validé</span>
+        </div>
+      </div>
+      <div class="stat-card stat-card--yellow">
+        <div class="stat-icon-wrap">⏳</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ totalEnAttente | number:'1.2-2' }} DT</span>
+          <span class="stat-label">En attente</span>
+        </div>
+      </div>
+      <div class="stat-card stat-card--blue">
+        <div class="stat-icon-wrap">🎓</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ nbFormations }}</span>
+          <span class="stat-label">Formations</span>
+        </div>
+      </div>
+      <div class="stat-card stat-card--purple">
+        <div class="stat-icon-wrap">📋</div>
+        <div class="stat-body">
+          <span class="stat-value">{{ nbPaiements }}</span>
+          <span class="stat-label">Paiements</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÉTAT VIDE -->
+    <div *ngIf="cards.length === 0" class="empty-state">
+      <span class="empty-icon">📭</span>
+      <h3>Aucun paiement enregistré</h3>
+      <p>Vous n'avez pas encore de paiements enregistrés.</p>
+    </div>
+
+    <!-- CARTES -->
+    <div class="cards-grid" *ngIf="cards.length > 0">
+      <div class="pay-card" *ngFor="let c of cards">
+
+        <!-- TÊTE COLORÉE -->
+        <div class="card-head" [ngClass]="'card-head--' + c.statut.toLowerCase()">
+          <div class="card-head-left">
+            <span class="card-mode-icon">{{ getModeIcon(c.mode) }}</span>
+            <div>
+              <h3 class="card-formation-titre">{{ c.formationTitre }}</h3>
+              <span class="card-mode-label">{{ getModeLabel(c.mode) }}</span>
+            </div>
+          </div>
+          <span class="card-statut-badge">{{ getCardStatutLabel(c.statut) }}</span>
+        </div>
+
+        <!-- CORPS -->
+        <div class="card-body">
+
+          <!-- GRILLE FINANCIÈRE -->
+          <div class="finance-grid">
+            <div class="finance-item">
+              <span class="finance-label">Total facturé</span>
+              <span class="finance-value">{{ c.totalBrut | number:'1.2-2' }} DT</span>
+            </div>
+            <div class="finance-item finance-item--green">
+              <span class="finance-label">Montant payé</span>
+              <span class="finance-value">{{ c.totalPaye | number:'1.2-2' }} DT</span>
+            </div>
+            <div class="finance-item" [ngClass]="c.restant > 0 ? 'finance-item--red' : 'finance-item--green'">
+              <span class="finance-label">Restant</span>
+              <span class="finance-value">{{ c.restant | number:'1.2-2' }} DT</span>
+            </div>
+          </div>
+
+          <!-- TRANCHES -->
+          <div class="tranches-info" *ngIf="c.mode === 'TRANCHE' && c.totalTranches > 0">
+            <span class="tranches-label">Tranches :</span>
+            <div class="tranches-dots">
+              <span *ngFor="let t of [].constructor(c.totalTranches); let i = index"
+                class="tranche-dot" [title]="'Tranche ' + (i+1)">
+                {{ i < c.tranchePayee ? '✅' : '⭕' }}
+              </span>
+            </div>
+            <span class="tranches-count">{{ c.tranchePayee }}/{{ c.totalTranches }} payées</span>
+          </div>
+
+          <!-- BARRE DE PROGRESSION -->
+          <div class="progress-wrap">
+            <div class="progress-bar">
+              <div class="progress-fill"
+                [style.width.%]="progressPercent(c)"
+                [ngClass]="c.statut === 'VALIDE' ? 'progress-fill--green' : 'progress-fill--blue'">
+              </div>
+            </div>
+            <span class="progress-pct">{{ progressPercent(c) }}%</span>
+          </div>
+
+          <!-- ALERTE RESTANT -->
+          <div *ngIf="c.restant > 0" class="alert-restant">
+            ⚠️ {{ c.restant | number:'1.2-2' }} DT en attente de validation
+          </div>
+
+          <!-- DÉTAILS DÉPLIABLES -->
+          <div class="details-toggle" (click)="toggleCard(cardKey(c))">
+            {{ isExpanded(cardKey(c)) ? '▲ Masquer le détail' : '▼ Voir le détail des paiements' }}
+          </div>
+
+          <div class="details-list" *ngIf="isExpanded(cardKey(c))">
+            <div class="detail-row" *ngFor="let p of c.paiements">
+              <span class="detail-icon">{{ getStatutIcon(p.statut) }}</span>
+              <span class="detail-label" *ngIf="c.mode === 'FORMATION'">Formation complète</span>
+              <span class="detail-label" *ngIf="c.mode === 'TRANCHE'">Tranche {{ p.trancheNumber }}</span>
+              <span class="detail-label" *ngIf="c.mode === 'SEANCE'">{{ p.seanceTitre || 'Séance' }}</span>
+              <span class="detail-label" *ngIf="c.mode === 'ANNUAIRE'">{{ p.moisAnnuaire ? getMoisLabel(p.moisAnnuaire) : 'Mensuel' }}</span>
+              <span class="detail-date">{{ p.datePaiement | date:'dd/MM/yyyy' }}</span>
+              <span class="detail-montant">{{ p.montantNet | number:'1.2-2' }} DT</span>
+              <span class="detail-badge" [ngClass]="getStatutClass(p.statut)">{{ getStatutLabel(p.statut) }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

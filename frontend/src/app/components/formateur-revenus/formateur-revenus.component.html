@@ -1,0 +1,113 @@
+<div class="rev-page">
+
+  <div class="rev-header">
+    <h1>💰 Mes Revenus</h1>
+    <p class="rev-subtitle">Suivi de vos paiements reçus par formation</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+  <div *ngIf="isLoading" class="loading-msg">Chargement...</div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card stat-card--green">
+      <span class="stat-icon">✅</span>
+      <div>
+        <div class="stat-value">{{ totalRecu | number:'1.2-2' }} DT</div>
+        <div class="stat-label">Total reçu</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--yellow" *ngIf="totalEnAttente > 0">
+      <span class="stat-icon">⏳</span>
+      <div>
+        <div class="stat-value">{{ totalEnAttente | number:'1.2-2' }} DT</div>
+        <div class="stat-label">En attente</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--blue">
+      <span class="stat-icon">🎓</span>
+      <div>
+        <div class="stat-value">{{ formations.length }}</div>
+        <div class="stat-label">Formations</div>
+      </div>
+    </div>
+    <div class="stat-card stat-card--purple">
+      <span class="stat-icon">📋</span>
+      <div>
+        <div class="stat-value">{{ paiements.length }}</div>
+        <div class="stat-label">Paiements</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLEAU -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <h2>Historique de mes paiements</h2>
+    </div>
+    <table class="data-table" *ngIf="paiements.length > 0">
+      <thead>
+        <tr>
+          <th>Formation</th>
+          <th>Mode</th>
+          <th>Tranche</th>
+          <th>Montant</th>
+          <th>Date</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of paiements">
+          <td><strong>{{ p.formationTitre }}</strong></td>
+          <td><span class="mode-badge">{{ getModeLabel(p.modePaiement) }}</span></td>
+          <td>
+            <span *ngIf="p.numeroTranche">T{{ p.numeroTranche }}/{{ p.nombreTranches }}</span>
+            <span *ngIf="!p.numeroTranche" class="muted">—</span>
+          </td>
+          <td><strong>{{ p.montant | number:'1.2-2' }} DT</strong></td>
+          <td>{{ p.datePaiement | date:'dd/MM/yyyy' }}</td>
+          <td><span class="statut-badge" [ngClass]="getStatutClass(p.statut)">
+            {{ p.statut === 'VALIDE' ? 'Validé' : p.statut === 'EN_ATTENTE' ? 'En attente' : 'Rejeté' }}
+          </span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!isLoading && paiements.length === 0" class="empty-state">
+      <span class="empty-icon">💰</span>
+      <p>Aucun paiement enregistré pour vos formations</p>
+    </div>
+  </div>
+
+  <!-- REVENUS PAR FORMATION -->
+  <div class="table-card" *ngIf="formations.length > 0">
+    <div class="table-card-header">
+      <h2>Revenus par formation</h2>
+    </div>
+    <div class="formation-details">
+      <div class="formation-rev-card" *ngFor="let f of formations">
+        <div class="frc-header">
+          <div class="frc-info">
+            <span class="frc-titre">🎓 {{ f.formationTitre }}</span>
+            <span class="frc-mode">{{ getModeLabel(f.modePaiement) }}</span>
+          </div>
+          <div class="frc-total">
+            <span class="frc-montant">{{ f.totalRecu | number:'1.2-2' }} DT</span>
+            <span class="frc-count">{{ f.nbPaiements }} paiement(s)</span>
+          </div>
+        </div>
+        <div class="frc-paiements" *ngIf="f.paiements.length > 0">
+          <div class="frc-p" *ngFor="let p of f.paiements">
+            <span *ngIf="p.numeroTranche" class="frc-tranche">Tranche {{ p.numeroTranche }}/{{ p.nombreTranches }}</span>
+            <span *ngIf="p.montantParTranche" class="frc-par-tranche">{{ p.montantParTranche | number:'1.2-2' }} DT/tranche</span>
+            <span class="frc-p-montant">{{ p.montant | number:'1.2-2' }} DT</span>
+            <span class="frc-p-date">{{ p.datePaiement | date:'dd/MM/yyyy' }}</span>
+            <span class="statut-badge" [ngClass]="getStatutClass(p.statut)">
+              {{ p.statut === 'VALIDE' ? 'Validé' : 'En attente' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
